@@ -10,9 +10,12 @@ public class Cell
 
     public Vector2 WorldPos;
 
+    public Pawn CurrentPawn;
+
     public Cell(bool hasPawnOnIt, Vector2 worldPos)
     {
         HasPawnOnIt = hasPawnOnIt;
         WorldPos = worldPos;
+        CurrentPawn = null;
     }
 }

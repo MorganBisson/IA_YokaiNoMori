@@ -9,10 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3d5b526b2d4bc248a6ab843a1d590d8, type: 3}
-  m_Name: Koropokkuru
+  m_Script: {fileID: 11500000, guid: 5b5c8042cd29d844aaac15c922d75e1c, type: 3}
+  m_Name: Kitsune
   m_EditorClassIdentifier: 
-  _yokaiType: 0
-  _sprite: {fileID: 21300000, guid: ecc389dee46c8d64ba074947f7ce3da4, type: 3}
+  _yokaiType: 1
+  _sprite: {fileID: 21300000, guid: bccee56c061794247bbd55da7ee9c63e, type: 3}
   _spawnPosition: {x: 0, y: 0}
-  _availableDirections: []
+  _availableDirections:
+  - {x: -1, y: 1}
+  - {x: -1, y: -1}
+  - {x: 1, y: 1}
+  - {x: 1, y: -1}

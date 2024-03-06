@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: YokaiGridData
   m_EditorClassIdentifier: 
   _gridSize: {x: 5.5, y: 7.3}
-  _cellSize: 1.7
+  _cellSize: 1.82

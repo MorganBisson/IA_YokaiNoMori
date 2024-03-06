@@ -9,10 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3d5b526b2d4bc248a6ab843a1d590d8, type: 3}
+  m_Script: {fileID: 11500000, guid: 5b5c8042cd29d844aaac15c922d75e1c, type: 3}
   m_Name: Tanuki
   m_EditorClassIdentifier: 
   _yokaiType: 2
   _sprite: {fileID: 21300000, guid: 7a87416f24a404f448272a1212d3a536, type: 3}
   _spawnPosition: {x: 0, y: 0}
-  _availableDirections: []
+  _availableDirections:
+  - {x: 0, y: 1}
+  - {x: 1, y: -1}
+  - {x: 0, y: -1}
+  - {x: 1, y: 0}
