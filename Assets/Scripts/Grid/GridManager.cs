@@ -6,7 +6,7 @@ using UnityEngine;
 public class GridManager : MonoBehaviour
 {
 
-    [SerializeField] private Grid _grid;
+    [SerializeField] private CustomGrid _grid;
 
     [SerializeField] private GameObject _testGO; 
 
@@ -19,16 +19,13 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private float _cellSize;
 
-    private Transform _camTransform;
-
     // Start is called before the first frame update
     void Start()
     {
-        var GridCenter = _grid.GetCellCenterWorld(new Vector3Int(0, 1));
+        //var GridCenter = _grid.GetCellCenterWorld(new Vector3Int(0, 1));
 
-        Instantiate(_testGO, GridCenter, Quaternion.identity);
+       //Instantiate(_testGO, GridCenter, Quaternion.identity);
 
-        //_camTransform = Camera.main.transform;
 
         //CreateGrid();
     }
@@ -56,8 +53,6 @@ public class GridManager : MonoBehaviour
     //            Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.green, 100.0f);
     //        }
     //    }
-
-    //    _camTransform.position = new Vector3((float)_width / 2 - 0.5f, (float)_height / 2 - 0.5f, 10);
 
     //}
 
