@@ -41,7 +41,7 @@ public class CustomGrid : MonoBehaviour
 
                 //bool walkable = !(Physics2D.OverlapCircle(WorldPoint, m_nodeRadius));
 
-                _grid[x, y] = new Cell(false, WorldPoint);
+                _grid[x, y] = new Cell(false, WorldPoint, new Vector2(x, y));
 
                 print(_grid[x, y].WorldPos);
             }
@@ -49,21 +49,44 @@ public class CustomGrid : MonoBehaviour
     }
 
 
-    public Cell CellFromWorldPoint(Vector2 worldPos)
-    {
-        float percentX = (worldPos.x / gridData.GridSize.x / 2) / gridData.GridSize.x;
-        float percentY = (worldPos.y / gridData.GridSize.y / 2) / gridData.GridSize.y;
+    //public Cell CellFromWorldPoint(Vector2 worldPos)
+    //{
+    //    float percentX = (worldPos.x / gridData.GridSize.x / 2) / gridData.GridSize.x;
+    //    float percentY = (worldPos.y / gridData.GridSize.y / 2) / gridData.GridSize.y;
 
+    //    percentX = Mathf.Clamp01(percentX);
+    //    percentY = Mathf.Clamp01(percentY);
+
+    //    int x = Mathf.FloorToInt(Mathf.Clamp((_gridSizeX) * percentX, 0, _gridSizeX - 1));
+    //    int y = Mathf.FloorToInt(Mathf.Clamp((_gridSizeY) * percentY, 0, _gridSizeY - 1));
+
+
+    //    //Mathf.FloorToInt(Mathf.Min(gridSizeX * percentX, gridSizeX - 1))
+
+    //    return _grid[x, y];
+    //}
+
+
+    public Cell CellFromWorldPoint(Vector3 worldPos)
+    {
+        if (_grid == null)
+            return null;
+
+        Vector2Int coords = GridPointFromWorldPos(worldPos);
+        return _grid[coords.x, coords.y];
+    }
+
+    public Vector2Int GridPointFromWorldPos(Vector3 worldPos)
+    {
+        float percentX = (worldPos.x + gridData.GridSize.x / 2) / gridData.GridSize.x;
+        float percentY = (worldPos.y + gridData.GridSize.y / 2) / gridData.GridSize.y;
         percentX = Mathf.Clamp01(percentX);
         percentY = Mathf.Clamp01(percentY);
 
-        int x = Mathf.FloorToInt(Mathf.Clamp((_gridSizeX) * percentX, 0, _gridSizeX - 1));
-        int y = Mathf.FloorToInt(Mathf.Clamp((_gridSizeY) * percentY, 0, _gridSizeY - 1));
+        int x = Mathf.RoundToInt((_gridSizeX - 1) * percentX);
+        int y = Mathf.RoundToInt((_gridSizeY - 1) * percentY);
 
-
-        //Mathf.FloorToInt(Mathf.Min(gridSizeX * percentX, gridSizeX - 1))
-
-        return _grid[x, y];
+        return new Vector2Int(x, y);
     }
 
 

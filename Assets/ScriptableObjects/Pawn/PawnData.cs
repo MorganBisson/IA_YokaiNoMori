@@ -5,6 +5,14 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewPawnData", menuName = "Yokai/PawnData")]
 public class PawnData : ScriptableObject
 {
+
+    public struct SpawnPosition
+    {
+        public Vector2 Player1;
+        public Vector2 Player2;
+    }
+
+
     [SerializeField]
     private YokaiType _yokaiType;
     public YokaiType YokaiType => _yokaiType;
@@ -12,11 +20,6 @@ public class PawnData : ScriptableObject
     [SerializeField]
     private Sprite _sprite;
     public Sprite PawnSprite => _sprite;
-
-
-    [SerializeField]
-    private Vector2 _spawnPosition;
-    public Vector2 SpawnPosition => _spawnPosition;
 
     [SerializeField]
     private Vector2[] _availableDirections;

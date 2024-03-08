@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6913536598203221598}
   - component: {fileID: 3363026063841637591}
-  - component: {fileID: 3562877405091614653}
+  - component: {fileID: -1377695485550155500}
   m_Layer: 0
-  m_Name: Kitsune
+  m_Name: KodamaSamurai
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: bccee56c061794247bbd55da7ee9c63e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 62c19e924e35fcf42af6eee59a29587e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -85,7 +85,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3562877405091614653
+--- !u!114 &-1377695485550155500
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,7 +94,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 2203582472814873267}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2153f364f193660458c175a352c812ba, type: 3}
+  m_Script: {fileID: 11500000, guid: 96478a74fc8586647b2ae1f93eb639fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _data: {fileID: 11400000, guid: 0345e68ab0cc6a74eade7a6e58d54559, type: 2}
+  _data: {fileID: 11400000, guid: f680906c75cf79b40bec74c32fb6ed95, type: 2}
+  EvolutionData: {fileID: 11400000, guid: c0f7ac79581dc99499aabf0d56334605, type: 2}

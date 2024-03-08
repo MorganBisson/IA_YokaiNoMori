@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3363026063841637591}
   - component: {fileID: 3562877405091614653}
   m_Layer: 0
-  m_Name: Kitsune
+  m_Name: Koropokkuru
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: bccee56c061794247bbd55da7ee9c63e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ecc389dee46c8d64ba074947f7ce3da4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -97,4 +97,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2153f364f193660458c175a352c812ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _data: {fileID: 11400000, guid: 0345e68ab0cc6a74eade7a6e58d54559, type: 2}
+  _data: {fileID: 11400000, guid: b49b2a6a2ecb7894c9c0ad13c7ff8c5a, type: 2}

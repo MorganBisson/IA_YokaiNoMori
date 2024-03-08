@@ -19,9 +19,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public enum Player { Player1, Player2 };
 
-    public Player currentPlayer;
+    [Header("Starting pawns")]
+    [Tooltip("The pawns which every players start with")]
+    [SerializeField]
+    private List<Pawn> _startPawns;
+    public List<Pawn> StartPawns => _startPawns;
+
+    private List<Player> _players = new List<Player>();
+
+    private Player _currentPlayer;
+    public Player CurrentPlayer => _currentPlayer;
+
+    [SerializeField] private CustomGrid _grid;
+
+
 
     private void Awake()
     {
@@ -33,21 +45,36 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        InitPlayers();
+
         // Joueur 1 en premier
-        currentPlayer = Player.Player1;
-    }
-
-    void Update()
-    {
-
+        _currentPlayer = _players[0];
     }
 
     public void NextPlayer()
     {
         // Passez au joueur suivant
-        if (currentPlayer == Player.Player1)
-            currentPlayer = Player.Player2;
+        if (_currentPlayer == _players[0])
+            _currentPlayer = _players[1];
         else
-            currentPlayer = Player.Player1;
+            _currentPlayer = _players[0];
     }
+
+
+    private void InitPlayers()
+    {
+        for (int i = 0;  i < 2; i++) 
+        {
+            Player newPlayer = new Player(i, new List<Pawn>(_startPawns));
+            _players.Add(newPlayer);
+        }
+    }
+
+    private void InitPlayerPawn()
+    {
+
+       
+    }
+
+
 }
