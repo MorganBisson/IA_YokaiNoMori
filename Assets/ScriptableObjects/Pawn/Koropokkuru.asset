@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _yokaiType: 0
   _sprite: {fileID: 21300000, guid: ecc389dee46c8d64ba074947f7ce3da4, type: 3}
-  _spawnPosition: {x: 0, y: 0}
   _availableDirections:
   - {x: 1, y: 1}
   - {x: 1, y: 0}
@@ -24,3 +23,6 @@ MonoBehaviour:
   - {x: -1, y: -1}
   - {x: 0, y: -1}
   - {x: 1, y: -1}
+  _spawnPosition:
+    Player1: {x: 1, y: 3}
+    Player2: {x: 1, y: 0}

@@ -6,10 +6,11 @@ using UnityEngine;
 public class PawnData : ScriptableObject
 {
 
+    [System.Serializable]
     public struct SpawnPosition
     {
-        public Vector2 Player1;
-        public Vector2 Player2;
+        public Vector2Int Player1;
+        public Vector2Int Player2;
     }
 
 
@@ -24,6 +25,12 @@ public class PawnData : ScriptableObject
     [SerializeField]
     private Vector2[] _availableDirections;
     public Vector2[] AvailableDirections => _availableDirections;
+
+
+    [SerializeField]
+    private SpawnPosition _spawnPosition;
+
+    public SpawnPosition PawnSpawnPosition => _spawnPosition;
 }
 
 public enum YokaiType

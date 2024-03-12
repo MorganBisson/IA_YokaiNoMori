@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6913536598203221598}
   - component: {fileID: 3363026063841637591}
-  - component: {fileID: 3562877405091614653}
+  - component: {fileID: -5930610970260876325}
   m_Layer: 0
   m_Name: Kodama
   m_TagString: Untagged
@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2921, y: 0.2686, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -85,7 +85,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3562877405091614653
+--- !u!114 &-5930610970260876325
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,7 +94,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 2203582472814873267}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2153f364f193660458c175a352c812ba, type: 3}
+  m_Script: {fileID: 11500000, guid: 96478a74fc8586647b2ae1f93eb639fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _data: {fileID: 11400000, guid: f680906c75cf79b40bec74c32fb6ed95, type: 2}
+  Data: {fileID: 11400000, guid: f680906c75cf79b40bec74c32fb6ed95, type: 2}
+  EvolutionData: {fileID: 11400000, guid: c0f7ac79581dc99499aabf0d56334605, type: 2}

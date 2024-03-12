@@ -6,27 +6,25 @@ using UnityEngine;
 
 public class CustomGrid : MonoBehaviour
 {
+    [SerializeField]
+    private bool _debugGrid;
 
     public GridData gridData;
 
     private Cell[,] _grid;
+
+    public Cell[,] GridCells => _grid;
 
 
     int _gridSizeX;
     int _gridSizeY;
 
 
-    private void Start()
+    public void CreateGrid()
     {
-
         _gridSizeX = Mathf.RoundToInt(gridData.GridSize.x / gridData.CellSize);
         _gridSizeY = Mathf.RoundToInt(gridData.GridSize.y / gridData.CellSize);
 
-        CreateGrid();
-    }
-
-    private void CreateGrid()
-    {
         _grid = new Cell[_gridSizeX, _gridSizeY];
 
         Vector3 WorldBottomLeft = transform.position - Vector3.right * gridData.GridSize.x / 2 - Vector3.up * gridData.GridSize.y / 2;
@@ -41,7 +39,7 @@ public class CustomGrid : MonoBehaviour
 
                 //bool walkable = !(Physics2D.OverlapCircle(WorldPoint, m_nodeRadius));
 
-                _grid[x, y] = new Cell(false, WorldPoint, new Vector2(x, y));
+                _grid[x, y] = new Cell(WorldPoint, new Vector2(x, y));
 
                 print(_grid[x, y].WorldPos);
             }
@@ -69,15 +67,6 @@ public class CustomGrid : MonoBehaviour
 
     public Cell CellFromWorldPoint(Vector3 worldPos)
     {
-        if (_grid == null)
-            return null;
-
-        Vector2Int coords = GridPointFromWorldPos(worldPos);
-        return _grid[coords.x, coords.y];
-    }
-
-    public Vector2Int GridPointFromWorldPos(Vector3 worldPos)
-    {
         float percentX = (worldPos.x + gridData.GridSize.x / 2) / gridData.GridSize.x;
         float percentY = (worldPos.y + gridData.GridSize.y / 2) / gridData.GridSize.y;
         percentX = Mathf.Clamp01(percentX);
@@ -86,7 +75,15 @@ public class CustomGrid : MonoBehaviour
         int x = Mathf.RoundToInt((_gridSizeX - 1) * percentX);
         int y = Mathf.RoundToInt((_gridSizeY - 1) * percentY);
 
-        return new Vector2Int(x, y);
+        return _grid[x, y];
+    }
+
+
+    private Vector2 GetCellCenterPos(Cell cell)
+    {
+        var cellHalfSize = gridData.CellSize / 2;
+
+        return new Vector2(cell.WorldPos.x + cellHalfSize, cell.WorldPos.y + cellHalfSize);
     }
 
 
@@ -94,6 +91,8 @@ public class CustomGrid : MonoBehaviour
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridData.GridSize.x, gridData.GridSize.y, -1));
         Gizmos.color = Color.red;
+
+        if (_debugGrid == false) return; 
 
 
         if (_grid != null)

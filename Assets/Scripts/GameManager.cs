@@ -20,18 +20,23 @@ public class GameManager : MonoBehaviour
     }
 
 
+    [SerializeField] private CustomGrid _grid;
+
     [Header("Starting pawns")]
     [Tooltip("The pawns which every players start with")]
     [SerializeField]
     private List<Pawn> _startPawns;
     public List<Pawn> StartPawns => _startPawns;
 
+
+
     private List<Player> _players = new List<Player>();
+    public List<Player> Players => _players;
+
 
     private Player _currentPlayer;
     public Player CurrentPlayer => _currentPlayer;
 
-    [SerializeField] private CustomGrid _grid;
 
 
 
@@ -45,14 +50,18 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        _grid.CreateGrid();
+
         InitPlayers();
 
-        // Joueur 1 en premier
-        _currentPlayer = _players[0];
+        SpawnPlayerPawns();
     }
 
     public void NextPlayer()
     {
+        // Vérifier si un joueur a gagné ou si il y a match nul avant de passer au prochain tour
+        //
+
         // Passez au joueur suivant
         if (_currentPlayer == _players[0])
             _currentPlayer = _players[1];
@@ -66,15 +75,57 @@ public class GameManager : MonoBehaviour
         for (int i = 0;  i < 2; i++) 
         {
             Player newPlayer = new Player(i, new List<Pawn>(_startPawns));
+            //newPlayer.InitPawns();
+
             _players.Add(newPlayer);
+
         }
+        // Joueur 1 en premier
+        _currentPlayer = _players[0];
     }
 
-    private void InitPlayerPawn()
+    private void SpawnPlayerPawns()
     {
+        foreach (Player player in _players)
+        {
+            foreach (Pawn pawn in player.Pawns)
+            {
+                PawnData.SpawnPosition spawnPosData = pawn.Data.PawnSpawnPosition;
+                Quaternion spawnRotation;
+                Cell spawnCell;
+    
 
+                if (player.PlayerID == 0)
+                {
+                    spawnCell = _grid.GridCells[spawnPosData.Player1.x, spawnPosData.Player1.y];
+                    spawnRotation = Quaternion.identity;
+                } 
+                else
+                {
+                    spawnCell = _grid.GridCells[spawnPosData.Player2.x, spawnPosData.Player2.y];
+                    spawnRotation = Quaternion.Euler(180, 0, 0);
+                }
+
+                Pawn newPawn = Instantiate(pawn, spawnCell.WorldPos, spawnRotation);
+                newPawn.OwningPlayer = player;
+
+                spawnCell.CurrentPawn = newPawn;
+                
+            }
+        }
        
     }
 
+
+
+    //private bool CheckHasWon()
+    //{
+        
+    //}
+
+    //private bool CheckForDraw()
+    //{
+
+    //}
 
 }

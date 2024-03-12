@@ -304,6 +304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96d07e0868b71a44ab13eedf06f3993b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _debugGrid: 0
   gridData: {fileID: 11400000, guid: c761393e722365d429e7d45f74a2c6fd, type: 2}
 --- !u!1 &1225740884
 GameObject:
@@ -603,6 +604,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6669646491147807585, guid: 3e66d0bac734e5044adc6bb5cd39b23b, type: 3}
+      propertyPath: _grid
+      value: 
+      objectReference: {fileID: 685099729}
+    - target: {fileID: 6669646491147807585, guid: 3e66d0bac734e5044adc6bb5cd39b23b, type: 3}
       propertyPath: _startPawns.Array.size
       value: 4
       objectReference: {fileID: 0}
@@ -613,7 +618,7 @@ PrefabInstance:
     - target: {fileID: 6669646491147807585, guid: 3e66d0bac734e5044adc6bb5cd39b23b, type: 3}
       propertyPath: _startPawns.Array.data[1]
       value: 
-      objectReference: {fileID: 3562877405091614653, guid: f3eed09b6a70e0748b8a73451bdba493, type: 3}
+      objectReference: {fileID: -5930610970260876325, guid: f3eed09b6a70e0748b8a73451bdba493, type: 3}
     - target: {fileID: 6669646491147807585, guid: 3e66d0bac734e5044adc6bb5cd39b23b, type: 3}
       propertyPath: _startPawns.Array.data[2]
       value: 
@@ -631,9 +636,9 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 3051386091969756248}
   - {fileID: 519420032}
   - {fileID: 1374736694}
   - {fileID: 1225740887}
-  - {fileID: 3051386091969756248}
   - {fileID: 685099728}
   - {fileID: 412543191}

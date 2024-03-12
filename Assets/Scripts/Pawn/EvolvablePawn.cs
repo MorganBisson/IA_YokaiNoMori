@@ -14,4 +14,10 @@ public class EvolvablePawn : Pawn
         _hasEvolved = true;
         _spriteRenderer.sprite = EvolutionData.PawnSprite;
     }
+
+    public void Reset()
+    {
+        _hasEvolved = false;
+        _spriteRenderer.sprite = Data.PawnSprite;
+    }
 }

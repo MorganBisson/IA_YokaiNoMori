@@ -33,9 +33,9 @@ public class Player
 
     public void InitPawns()
     {
-        foreach (var paw in _pawns) 
+        foreach (Pawn pawn in _pawns) 
         { 
-            
+            pawn.OwningPlayer = this;
         }
     }
 

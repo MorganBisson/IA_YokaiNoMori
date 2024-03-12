@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Pawn : MonoBehaviour
 {
-    [SerializeField] private PawnData _data;
+    public PawnData Data;
 
     protected SpriteRenderer _spriteRenderer;
 
@@ -13,7 +13,13 @@ public class Pawn : MonoBehaviour
 
     private Player _owningPlayer;
 
-    public Player OwningPlayer => _owningPlayer;
+
+    public Player OwningPlayer
+    {
+        get { return _owningPlayer; }
+        set { _owningPlayer = value; }
+    }
+    
 
     private Vector2 _currentPosition;
     public Vector2 Position => _currentPosition;
@@ -26,7 +32,7 @@ public class Pawn : MonoBehaviour
     private void InitializePawn()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _spriteRenderer.sprite = _data.PawnSprite;
+        _spriteRenderer.sprite = Data.PawnSprite;
 
         //transform.position = _data.SpawnPosition;
     }
