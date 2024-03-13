@@ -12,23 +12,23 @@ public class Player
     public int PlayerID => _playerID;
 
 
-    // Pawns the player has on the table
-    private List<Pawn> _pawns = new List<Pawn>();
-    public List<Pawn> Pawns => _pawns;
-
     // Pawns the player has on the reserve
-    private List<Pawn> _pawnsInReserve = new List<Pawn>();
-    public List<Pawn> PawnsInReserve => _pawnsInReserve;
+    private Dictionary<YokaiType, Pawn> _pawnsInReserve = new();
+    public Dictionary<YokaiType, Pawn> PawnsInReserve => _pawnsInReserve;
+
+    private Dictionary<YokaiType, Pawn> _pawns = new();
+    public Dictionary<YokaiType, Pawn> Pawns => _pawns;
+
 
     // Player's reserve
     private ReserveManager _reserve = new ReserveManager();
     public ReserveManager Reserve => _reserve;
 
 
-    public bool IsPlayerTurn = false;
+    public bool HasWon = false;
 
 
-    public Player(int playerId, List<Pawn> pawns, ReserveManager reserve)
+    public Player(int playerId, Dictionary<YokaiType, Pawn> pawns, ReserveManager reserve)
     {
         _playerID = playerId;
         _pawns = pawns;
@@ -37,9 +37,10 @@ public class Player
 
     public void InitPawns()
     {
-        foreach (Pawn pawn in _pawns)
-        {
-            pawn.OwningPlayer = this;
+        foreach (KeyValuePair<YokaiType, Pawn> pawn in _pawns) 
+        { 
+            pawn.Value.OwningPlayer = this;
+            pawn.Value.InitializePawn();
         }
     }
 
@@ -60,11 +61,11 @@ public class Player
     public void AddPawnToReserve(Pawn newPawn)
     {
         _reserve.AddPawnToReserve(_playerID, newPawn);
-        PawnsInReserve.Add(newPawn);
+        PawnsInReserve.Add(newPawn.Data.YokaiType, newPawn);
     }
 
     public void LosePawn(Pawn pawn)
     {
-        _pawns.Remove(pawn);
+        _pawns.Remove(pawn.Data.YokaiType); 
     }
 }

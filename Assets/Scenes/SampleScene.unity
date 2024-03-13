@@ -1859,6 +1859,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2035229078}
     - target: {fileID: 6669646491147807585, guid: 3e66d0bac734e5044adc6bb5cd39b23b, type: 3}
+      propertyPath: _pawnManager
+      value: 
+      objectReference: {fileID: 412543190}
+    - target: {fileID: 6669646491147807585, guid: 3e66d0bac734e5044adc6bb5cd39b23b, type: 3}
       propertyPath: reservePlayer1
       value: 
       objectReference: {fileID: 1653187894}

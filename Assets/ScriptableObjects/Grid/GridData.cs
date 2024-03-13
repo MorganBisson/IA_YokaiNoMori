@@ -6,7 +6,7 @@ public class GridData : ScriptableObject
 {
 
     [System.Serializable]
-    public struct EvolvableCell
+    public struct LastRow
     {
         public Vector2Int[] Player1;
         public Vector2Int[] Player2;
@@ -25,7 +25,7 @@ public class GridData : ScriptableObject
     public float CellRadius => _cellSize / 2;
 
 
-    public EvolvableCell EvolvableCells;
+    public LastRow lastRow;
 
 
 }

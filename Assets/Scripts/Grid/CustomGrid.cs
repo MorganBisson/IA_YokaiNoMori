@@ -38,31 +38,13 @@ public class CustomGrid : MonoBehaviour
 
                 //bool walkable = !(Physics2D.OverlapCircle(WorldPoint, m_nodeRadius));
 
-                _grid[x, y] = new Cell(WorldPoint, new Vector2(x, y));
+                _grid[x, y] = new Cell(WorldPoint, new Vector2Int(x, y));
 
                 if (_debugGrid)
                     print(_grid[x, y].WorldPos);
             }
         }
     }
-
-
-    //public Cell CellFromWorldPoint(Vector2 worldPos)
-    //{
-    //    float percentX = (worldPos.x / gridData.GridSize.x / 2) / gridData.GridSize.x;
-    //    float percentY = (worldPos.y / gridData.GridSize.y / 2) / gridData.GridSize.y;
-
-    //    percentX = Mathf.Clamp01(percentX);
-    //    percentY = Mathf.Clamp01(percentY);
-
-    //    int x = Mathf.FloorToInt(Mathf.Clamp((_gridSizeX) * percentX, 0, _gridSizeX - 1));
-    //    int y = Mathf.FloorToInt(Mathf.Clamp((_gridSizeY) * percentY, 0, _gridSizeY - 1));
-
-
-    //    //Mathf.FloorToInt(Mathf.Min(gridSizeX * percentX, gridSizeX - 1))
-
-    //    return _grid[x, y];
-    //}
 
 
     public Cell CellFromWorldPoint(Vector3 worldPos)
@@ -96,6 +78,29 @@ public class CustomGrid : MonoBehaviour
                 Gizmos.DrawCube(cell.WorldPos, Vector2.one * (gridData.CellSize - .1f));
             }
         }
+    }
+
+    public List<Cell> GetNeighbours(Cell cell)
+    {
+        List<Cell> neighbours = new List<Cell>();
+
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; y++)
+            {
+                if (x == 0 && y == 0)
+                    continue;
+
+                int checkX = (int)cell.GridPos.x + x;
+                int checkY = (int)cell.GridPos.y + y;
+
+                if (checkX >= 0 && checkX < _gridSizeX && checkY >= 0 && checkY < _gridSizeY)
+                {
+                    neighbours.Add(_grid[checkX, checkY]);
+                }
+            }
+        }
+        return neighbours;
     }
 
 }

@@ -9,6 +9,7 @@ public class PawnManager : MonoBehaviour
     [SerializeField] private float _timeBetweenClicks;
 
     private Pawn _selectedPawn;
+    public Pawn SelectedPawn => _selectedPawn;
 
     private Camera _camera;
 
@@ -26,15 +27,19 @@ public class PawnManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && _clickCooldown <= Time.time)
         {
-            _clickCooldown = Time.time + _timeBetweenClicks;
-            Debug.Log("Clique");
-            OnPlayerClick();
+            if (GameManager.Instance.IsGameInProgress == false)
+            {
+                _clickCooldown = Time.time + _timeBetweenClicks;
+                Debug.Log("Clique");
+                OnPlayerClick();
+            }
         }
     }
 
 
     private void OnPlayerClick()
     {
+
         Cell clickedCell = GetClickedCell();
         if (clickedCell == null) return;
 
@@ -53,6 +58,7 @@ public class PawnManager : MonoBehaviour
         {
             MovePawn(clickedCell);
             GameManager.Instance.NextPlayer();
+            _selectedPawn = null;
         }
     }
 
@@ -99,9 +105,6 @@ public class PawnManager : MonoBehaviour
         _selectedPawn.transform.position = newCell.WorldPos;
 
         newCell.CurrentPawn = _selectedPawn;
-
-        _selectedPawn = null;
-
     }
 
 

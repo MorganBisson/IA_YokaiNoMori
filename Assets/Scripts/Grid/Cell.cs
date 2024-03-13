@@ -8,16 +8,17 @@ public class Cell
 
     public Vector3 WorldPos;
 
-    public Vector2 GridPos;
+    public Vector2Int GridPos;
 
     public Pawn CurrentPawn;
 
 
-    public Cell(Vector2 worldPos, Vector2 gridPos)
+    public Cell(Vector2 worldPos, Vector2Int gridPos)
     {
-      
         WorldPos = worldPos;
-        CurrentPawn = null;
+        
         GridPos = gridPos;
+
+        CurrentPawn = null;
     }
 }

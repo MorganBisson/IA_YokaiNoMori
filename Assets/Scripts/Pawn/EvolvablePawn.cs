@@ -4,11 +4,18 @@ using UnityEngine;
 
 public class EvolvablePawn : Pawn, IEvolvable
 {
+    public PawnData EvolutionData;
 
-    bool _hasEvolved = false;
+
+    private bool _hasEvolved = false;
     public bool HasEvolved => _hasEvolved;
 
-    public PawnData EvolutionData;
+    
+    private bool _canEvolve = true;
+    public bool CanEvolve => _canEvolve;
+
+    
+
 
     public void OnEvolution()
     {
