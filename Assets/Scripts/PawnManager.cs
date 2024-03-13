@@ -84,8 +84,6 @@ public class PawnManager : MonoBehaviour
                     GameManager.Instance.CurrentPlayer.CapturePawn(cell.CurrentPawn);
 
                     GameManager.Instance.GetOtherPlayer().LosePawn(cell.CurrentPawn);
-
-                    cell.CurrentPawn.gameObject.SetActive(false);
                 }
             }
             return true;

@@ -16,47 +16,55 @@ public class Player
     private List<Pawn> _pawns = new List<Pawn>();
     public List<Pawn> Pawns => _pawns;
 
+    // Pawns the player has on the reserve
+    private List<Pawn> _pawnsInReserve = new List<Pawn>();
+    public List<Pawn> PawnsInReserve => _pawnsInReserve;
 
     // Player's reserve
-    private List<Pawn> _reserve = new List<Pawn>();
-    public List <Pawn> Reserve => _reserve;
+    private ReserveManager _reserve = new ReserveManager();
+    public ReserveManager Reserve => _reserve;
 
 
     public bool IsPlayerTurn = false;
 
 
-    public Player(int playerId, List<Pawn> pawns)
+    public Player(int playerId, List<Pawn> pawns, ReserveManager reserve)
     {
         _playerID = playerId;
         _pawns = pawns;
+        _reserve = reserve;
     }
 
     public void InitPawns()
     {
-        foreach (Pawn pawn in _pawns) 
-        { 
+        foreach (Pawn pawn in _pawns)
+        {
             pawn.OwningPlayer = this;
         }
     }
 
     public bool CanPlay()
     {
-        return GameManager.Instance.CurrentPlayer == this; 
+        return GameManager.Instance.CurrentPlayer == this;
     }
 
     public void CapturePawn(Pawn pawn)
     {
-        _reserve.Add(pawn);
-        
+        AddPawnToReserve(pawn);
+
         IEvolvable evolvablePawn = pawn.GetComponent<IEvolvable>();
 
         evolvablePawn?.ResetPawn();
-
     }
-    
+
+    public void AddPawnToReserve(Pawn newPawn)
+    {
+        _reserve.AddPawnToReserve(_playerID, newPawn);
+        PawnsInReserve.Add(newPawn);
+    }
+
     public void LosePawn(Pawn pawn)
     {
         _pawns.Remove(pawn);
     }
-
 }

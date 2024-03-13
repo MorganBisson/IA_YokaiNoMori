@@ -22,13 +22,15 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private CustomGrid _grid;
 
-    [Header("Starting pawns")]
+    [Header("PAWN START")]
     [Tooltip("The pawns which every players start with")]
     [SerializeField]
     private List<Pawn> _startPawns;
+
+    [SerializeField]
+    private Transform listPawns;
+
     public List<Pawn> StartPawns => _startPawns;
-
-
 
     private List<Player> _players = new List<Player>();
     public List<Player> Players => _players;
@@ -37,8 +39,8 @@ public class GameManager : MonoBehaviour
     private Player _currentPlayer;
     public Player CurrentPlayer => _currentPlayer;
 
-
-
+    [SerializeField] private ReserveManager reservePlayer1;
+    [SerializeField] private ReserveManager reservePlayer2;
 
     private void Awake()
     {
@@ -74,7 +76,7 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0;  i < 2; i++) 
         {
-            Player newPlayer = new Player(i, new List<Pawn>(_startPawns));
+            Player newPlayer = new Player(i, new List<Pawn>(_startPawns), i == 1 ? reservePlayer1 : reservePlayer2);
             //newPlayer.InitPawns();
 
             _players.Add(newPlayer);
@@ -106,7 +108,7 @@ public class GameManager : MonoBehaviour
                     spawnRotation = Quaternion.Euler(180, 0, 0);
                 }
 
-                Pawn newPawn = Instantiate(pawn, spawnCell.WorldPos, spawnRotation);
+                Pawn newPawn = Instantiate(pawn, spawnCell.WorldPos, spawnRotation, listPawns);
                 newPawn.OwningPlayer = player;
 
                 spawnCell.CurrentPawn = newPawn;
