@@ -520,7 +520,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _customGrid: {fileID: 685099729}
-  _timeBetweenClicks: 0.2
+  _timeBetweenClicks: 0.05
 --- !u!4 &412543191
 Transform:
   m_ObjectHideFlags: 0
