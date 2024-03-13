@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 
@@ -8,6 +5,12 @@ using UnityEngine;
 public class GridData : ScriptableObject
 {
 
+    [System.Serializable]
+    public struct EvolvableCell
+    {
+        public Vector2Int[] Player1;
+        public Vector2Int[] Player2;
+    }
 
     [Header("Grid")]
     [SerializeField] private Vector2 _gridSize;
@@ -20,6 +23,9 @@ public class GridData : ScriptableObject
 
     [HideInInspector]
     public float CellRadius => _cellSize / 2;
+
+
+    public EvolvableCell EvolvableCells;
 
 
 }

@@ -39,9 +39,24 @@ public class Player
         }
     }
 
-    bool CanPlay()
+    public bool CanPlay()
     {
         return GameManager.Instance.CurrentPlayer == this; 
+    }
+
+    public void CapturePawn(Pawn pawn)
+    {
+        _reserve.Add(pawn);
+        
+        IEvolvable evolvablePawn = pawn.GetComponent<IEvolvable>();
+
+        evolvablePawn?.ResetPawn();
+
+    }
+    
+    public void LosePawn(Pawn pawn)
+    {
+        _pawns.Remove(pawn);
     }
 
 }

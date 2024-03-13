@@ -16,9 +16,9 @@ MonoBehaviour:
   _sprite: {fileID: 21300000, guid: 7a87416f24a404f448272a1212d3a536, type: 3}
   _availableDirections:
   - {x: 0, y: 1}
-  - {x: 1, y: -1}
   - {x: 0, y: -1}
   - {x: 1, y: 0}
+  - {x: -1, y: 0}
   _spawnPosition:
     Player1: {x: 2, y: 0}
     Player2: {x: 0, y: 3}

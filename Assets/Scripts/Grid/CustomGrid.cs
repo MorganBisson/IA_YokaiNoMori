@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class CustomGrid : MonoBehaviour
@@ -41,7 +40,8 @@ public class CustomGrid : MonoBehaviour
 
                 _grid[x, y] = new Cell(WorldPoint, new Vector2(x, y));
 
-                print(_grid[x, y].WorldPos);
+                if (_debugGrid)
+                    print(_grid[x, y].WorldPos);
             }
         }
     }
@@ -79,21 +79,13 @@ public class CustomGrid : MonoBehaviour
     }
 
 
-    private Vector2 GetCellCenterPos(Cell cell)
-    {
-        var cellHalfSize = gridData.CellSize / 2;
-
-        return new Vector2(cell.WorldPos.x + cellHalfSize, cell.WorldPos.y + cellHalfSize);
-    }
-
-
     private void OnDrawGizmos()
     {
+
+        if (_debugGrid == false) return;
+
         Gizmos.DrawWireCube(transform.position, new Vector3(gridData.GridSize.x, gridData.GridSize.y, -1));
         Gizmos.color = Color.red;
-
-        if (_debugGrid == false) return; 
-
 
         if (_grid != null)
         {

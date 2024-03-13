@@ -1,22 +1,20 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PawnManager : MonoBehaviour
 {
 
-    [SerializeField]
-    private CustomGrid _customGrid;
-
+    [SerializeField] private CustomGrid _customGrid;
+    [SerializeField] private float _timeBetweenClicks;
 
     private Pawn _selectedPawn;
 
-    Camera _camera;
+    private Camera _camera;
 
     private Cell _previousClickedCell;
+
+    private float _clickCooldown; 
 
 
     private void Awake()
@@ -24,74 +22,14 @@ public class PawnManager : MonoBehaviour
         _camera = Camera.main;
     }
 
-
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && _clickCooldown <= Time.time)
         {
+            _clickCooldown = Time.time + _timeBetweenClicks;
+            Debug.Log("Clique");
             OnPlayerClick();
         }
-    }
-
-    private bool CanSelectPawn(Cell cell)
-    {
-        if (cell.HasPawnOnIt)
-        {
-            if (cell.CurrentPawn.OwningPlayer == GameManager.Instance.CurrentPlayer)
-            {
-                if (_selectedPawn == null || _selectedPawn.OwningPlayer == cell.CurrentPawn.OwningPlayer)
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private bool CanMovePawn(Cell cell)
-    {
-        if (cell.HasPawnOnIt)
-        {
-            if (cell.CurrentPawn.OwningPlayer != GameManager.Instance.CurrentPlayer && _selectedPawn != null)
-            {
-                if (CheckSelectedPawnDirection(cell))
-                    return true;
-            }
-            
-        }
-        else
-        {
-            if (CheckSelectedPawnDirection(cell))
-                return true;
-        }
-
-        
-
-        return false;
-    }
-
-
-    private void MovePawn(Cell newCell)
-    {
-        _previousClickedCell.CurrentPawn = null;
-
-        _selectedPawn.transform.position = newCell.WorldPos;
-
-        newCell.CurrentPawn = _selectedPawn;
-
-        //if (CanCapturePawn(newCell))
-        //{
-
-        //    GameManager.Instance.CurrentPlayer.Reserve.Add(newCell.CurrentPawn);
-
-        //    GameManager.Instance.CurrentPlayer.
-
-
-        //    newCell.CurrentPawn
-        //}
-
     }
 
 
@@ -108,10 +46,64 @@ public class PawnManager : MonoBehaviour
             return;
         }
 
+        if (_selectedPawn == null) return;
+
+
         if (CanMovePawn(clickedCell))
         {
             MovePawn(clickedCell);
+            GameManager.Instance.NextPlayer();
         }
+    }
+
+
+
+    private bool CanSelectPawn(Cell cell)
+    {
+        if (cell.HasPawnOnIt)
+        {
+            if (cell.CurrentPawn.OwningPlayer == GameManager.Instance.CurrentPlayer)
+            {
+                if (_selectedPawn == null || _selectedPawn.OwningPlayer == cell.CurrentPawn.OwningPlayer)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private bool CanMovePawn(Cell cell)
+    {
+        if (CheckSelectedPawnDirection(cell))
+        {
+            if (cell.HasPawnOnIt)
+            {  
+                if (CanCapturePawn(cell))
+                {
+                    GameManager.Instance.CurrentPlayer.CapturePawn(cell.CurrentPawn);
+
+                    GameManager.Instance.GetOtherPlayer().LosePawn(cell.CurrentPawn);
+
+                    cell.CurrentPawn.gameObject.SetActive(false);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+
+    private void MovePawn(Cell newCell)
+    {
+        _previousClickedCell.CurrentPawn = null;
+
+        _selectedPawn.transform.position = newCell.WorldPos;
+
+        newCell.CurrentPawn = _selectedPawn;
+
+        _selectedPawn = null;
+
     }
 
 
@@ -135,8 +127,8 @@ public class PawnManager : MonoBehaviour
 
         Cell cell = _customGrid.CellFromWorldPoint(mouseWorldPos);
 
-        Debug.Log("grid pos x : " + cell.GridPos.x);
-        Debug.Log("grid pos y : " + cell.GridPos.y);
+        //Debug.Log("grid pos x : " + cell.GridPos.x);
+        //Debug.Log("grid pos y : " + cell.GridPos.y);
 
         return cell;
     }
@@ -146,7 +138,7 @@ public class PawnManager : MonoBehaviour
     {
         if (cell.HasPawnOnIt)
         {
-            if (cell.CurrentPawn.OwningPlayer != GameManager.Instance.CurrentPlayer && _selectedPawn != null)
+            if (cell.CurrentPawn.OwningPlayer != GameManager.Instance.CurrentPlayer)
             {
                 return true;
             }

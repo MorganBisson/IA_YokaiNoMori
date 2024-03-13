@@ -116,7 +116,13 @@ public class GameManager : MonoBehaviour
        
     }
 
-
+    public Player GetOtherPlayer()
+    {
+        if (_currentPlayer == _players[0])
+            return _players[1];
+        else
+            return _players[0];
+    }
 
     //private bool CheckHasWon()
     //{
