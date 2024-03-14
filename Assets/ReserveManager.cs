@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class ReserveManager : MonoBehaviour
 {
@@ -12,15 +13,14 @@ public class ReserveManager : MonoBehaviour
         {
             SpriteRenderer sprite = GetEmptySlot();
             pawn.transform.SetParent(sprite.transform);
-            pawn.transform.SetPositionAndRotation(sprite.transform.position, Quaternion.identity);
+            pawn.transform.DOMove(sprite.transform.position, 1f).SetEase(Ease.OutBack);
         }
         else
         {
             SpriteRenderer sprite = GetEmptySlot();
             pawn.transform.SetParent(sprite.transform);
-            pawn.transform.SetPositionAndRotation(sprite.transform.position, Quaternion.identity);
+            pawn.transform.DOMove(sprite.transform.position, 1f).SetEase(Ease.OutBack);
         }
-        pawn.transform.localPosition = new Vector3();
     }
 
     private SpriteRenderer GetEmptySlot()

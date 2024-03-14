@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -102,7 +103,7 @@ public class PawnManager : MonoBehaviour
     {
         _previousClickedCell.CurrentPawn = null;
 
-        _selectedPawn.transform.position = newCell.WorldPos;
+        _selectedPawn.transform.DOMove(newCell.WorldPos , 0.5f);
 
         newCell.CurrentPawn = _selectedPawn;
     }

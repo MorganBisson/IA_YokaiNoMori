@@ -1,7 +1,10 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -49,6 +52,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private ReserveManager reservePlayer1;
     [SerializeField] private ReserveManager reservePlayer2;
 
+    [SerializeField] private TMP_Text txtPlayerTurn;
+
 
     private void Awake()
     {
@@ -84,6 +89,9 @@ public class GameManager : MonoBehaviour
         else
             _currentPlayer = _players[0];
 
+        txtPlayerTurn.text = _currentPlayer.PlayerID == 0 ? "Player One" : "Player Two";
+        txtPlayerTurn.transform.DOShakePosition(1f, 10f, 10);
+
         CheckHasWon();
     }
 
@@ -101,8 +109,12 @@ public class GameManager : MonoBehaviour
             newPlayer.InitPawns();
 
         }
+
         // Joueur 1 en premier
         _currentPlayer = _players[0];
+
+        txtPlayerTurn.text = "Player One";
+        txtPlayerTurn.transform.DOShakePosition(1f, 10f, 10);
     }
 
     private void SpawnPlayerPawns()
@@ -218,6 +230,11 @@ public class GameManager : MonoBehaviour
     {
         _isGameInProgress = true;
         Debug.Log("Player " + _currentPlayer.PlayerID + " has won !");
+
+        GameWinner.isWin = true;
+        GameWinner.WinPlayer = _currentPlayer;
+
+        SceneManager.LoadScene(2);
     }
 
     //private bool CheckForDraw()
