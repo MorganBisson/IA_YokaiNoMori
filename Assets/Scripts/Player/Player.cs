@@ -12,12 +12,19 @@ public class Player
     public int PlayerID => _playerID;
 
 
-    // Pawns the player has on the reserve
-    private Dictionary<YokaiType, Pawn> _pawnsInReserve = new();
-    public Dictionary<YokaiType, Pawn> PawnsInReserve => _pawnsInReserve;
+    private List<Pawn> _pawnsList = new();
+    public List<Pawn> PawnsList => _pawnsList;
 
-    private Dictionary<YokaiType, Pawn> _pawns = new();
-    public Dictionary<YokaiType, Pawn> Pawns => _pawns;
+    private List<Pawn> _reserveList = new();
+    public List<Pawn> _ReserveList => _reserveList;
+
+
+    // Pawns the player has on the reserve
+    //private Dictionary<YokaiType, Pawn> _pawnsInReserve = new();
+    //public Dictionary<YokaiType, Pawn> PawnsInReserve => _pawnsInReserve;
+
+    //private Dictionary<YokaiType, Pawn> _pawns = new();
+    //public Dictionary<YokaiType, Pawn> Pawns => _pawns;
 
 
     // Player's reserve
@@ -28,19 +35,24 @@ public class Player
     public bool HasWon = false;
 
 
-    public Player(int playerId, Dictionary<YokaiType, Pawn> pawns, ReserveManager reserve)
+    public Player(int playerId, ReserveManager reserve)
     {
         _playerID = playerId;
-        _pawns = pawns;
         _reserve = reserve;
     }
 
     public void InitPawns()
     {
-        foreach (KeyValuePair<YokaiType, Pawn> pawn in _pawns) 
-        { 
-            pawn.Value.OwningPlayer = this;
-            pawn.Value.InitializePawn();
+        //foreach (KeyValuePair<YokaiType, Pawn> pawn in _pawns) 
+        //{ 
+        //    pawn.Value.OwningPlayer = this;
+        //    pawn.Value.InitializePawn();
+        //}
+
+        foreach (Pawn pawn in _pawnsList)
+        {
+            pawn.OwningPlayer = this;
+            pawn.InitializePawn();
         }
     }
 
@@ -58,18 +70,39 @@ public class Player
 
     public void AddPawnToReserve(Pawn newPawn)
     {
+        //_reserve.AddPawnToReserve(_playerID, newPawn);
+        //PawnsInReserve.Add(newPawn.Data.YokaiType, newPawn);
+
+        _reserveList.Add(newPawn);
         _reserve.AddPawnToReserve(_playerID, newPawn);
-        PawnsInReserve.Add(newPawn.Data.YokaiType, newPawn);
     }
 
     public void OnPawnParachute(Pawn pawn)
     {
+        //_reserve.RemovePawnFromReserve(_playerID, pawn);
+        //PawnsInReserve.Remove(pawn.Data.YokaiType);
+
+        _reserveList.Remove(pawn);
         _reserve.RemovePawnFromReserve(_playerID, pawn);
-        PawnsInReserve.Remove(pawn.Data.YokaiType);
+
+        _pawnsList.Add(pawn);
     }
 
     public void LosePawn(Pawn pawn)
     {
-        _pawns.Remove(pawn.Data.YokaiType); 
+        _pawnsList.Remove(pawn);
+    }
+
+    public Pawn FindKoropokkuruInPawnsList()
+    {
+        for (int i = 0; i < _pawnsList.Count; i++) 
+        {
+            if (_pawnsList[i].Data.YokaiType == YokaiType.Koropokkuru)
+            {
+                return _pawnsList[i];
+            }
+        }
+
+        return null;
     }
 }

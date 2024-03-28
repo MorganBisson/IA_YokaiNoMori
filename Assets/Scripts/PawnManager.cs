@@ -187,9 +187,11 @@ public class PawnManager : MonoBehaviour
             {  
                 if (CanCapturePawn(cell))
                 {
+                   
                     GameManager.Instance.CurrentPlayer.CapturePawn(cell.CurrentPawn);
 
                     GameManager.Instance.GetOtherPlayer().LosePawn(cell.CurrentPawn);
+
                 }
             }
             return true;
@@ -212,6 +214,10 @@ public class PawnManager : MonoBehaviour
     private bool CheckSelectedPawnDirection(Cell clickedCell)
     {
         Vector2Int direction = new(clickedCell.GridPos.x - _previousClickedCell.GridPos.x, clickedCell.GridPos.y - _previousClickedCell.GridPos.y);
+
+        // return the opposite direction for player 2, who plays on top of the board
+        if (GameManager.Instance.CurrentPlayer.PlayerID == 1)
+            direction *= -1;
 
         if (_selectedPawn.AvailableDirections.Contains(direction))
         {

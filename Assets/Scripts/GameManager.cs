@@ -34,7 +34,9 @@ public class GameManager : MonoBehaviour
     private List<Pawn> _startPawns;
 
     [SerializeField]
-    private Transform listPawns;
+    private Transform listPawnsTransform;
+
+    public Transform ListPawnTransform => listPawnsTransform;
 
     public List<Pawn> StartPawns => _startPawns;
 
@@ -100,9 +102,7 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0;  i < 2; i++) 
         {
-            Dictionary<YokaiType, Pawn> dict = new();
-
-            Player newPlayer = new Player(i, dict, i == 1 ? reservePlayer1 : reservePlayer2);
+            Player newPlayer = new(i, i == 1 ? reservePlayer1 : reservePlayer2);
             //newPlayer.InitPawns();
 
             _players.Add(newPlayer);
@@ -140,12 +140,12 @@ public class GameManager : MonoBehaviour
                     spawnRotation = Quaternion.Euler(180, 0, 0);
                 }
 
-                Pawn newPawn = Instantiate(pawn, spawnCell.WorldPos, spawnRotation, listPawns);
+                Pawn newPawn = Instantiate(pawn, spawnCell.WorldPos, spawnRotation, listPawnsTransform);
                 newPawn.OwningPlayer = player;
 
                 spawnCell.CurrentPawn = newPawn;
 
-                player.Pawns.Add(newPawn.Data.YokaiType, newPawn);
+                player.PawnsList.Add(newPawn);
             }
 
             player.InitPawns();
@@ -162,15 +162,22 @@ public class GameManager : MonoBehaviour
 
         
     }
+    
 
     public bool CheckHasWon()
     {
-        if (_currentPlayer.PawnsInReserve.ContainsKey(YokaiType.Koropokkuru))
+        if (_currentPlayer._ReserveList.Count > 0)
         {
-            return true;
-        }
+            Pawn lastCapturedPawn = _currentPlayer._ReserveList.Last();
 
-        Pawn koropokkuru = _currentPlayer.Pawns[YokaiType.Koropokkuru];
+            if (lastCapturedPawn.Data.YokaiType == YokaiType.Koropokkuru)
+            {
+                return true;
+            }
+        }
+        
+
+        Pawn koropokkuru = _currentPlayer.FindKoropokkuruInPawnsList();
         Cell pawnCell = _grid.CellFromWorldPoint(koropokkuru.transform.position);
 
         if (PawnIsOnGridLastRow(pawnCell))
@@ -225,7 +232,6 @@ public class GameManager : MonoBehaviour
 
         return false;
     }
-
 
     private void EndGame()
     {
