@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IEvolvable
 {
-    public void OnEvolution();
+    public void Evolve();
 
     public void ResetPawn();
 

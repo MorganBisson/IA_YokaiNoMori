@@ -12,15 +12,35 @@ public class EvolvablePawn : Pawn, IEvolvable
 
     
     private bool _canEvolve = true;
-    public bool CanEvolve => _canEvolve;
+    public bool CanEvolve
+    {  
+        get { return _canEvolve; }
+        set { _canEvolve = value; } 
+    }
 
-    
+
+    public override void OnCapture(Player newOwningPlayer)
+    {
+        base.OnCapture(newOwningPlayer);
+
+        ResetPawn();
+    }
+
+    public override void OnParachute()
+    {
+        base.OnParachute();
+
+        AvailableDirections = Data.AvailableDirections;
+    }
 
 
-    public void OnEvolution()
+    public void Evolve()
     {
         _hasEvolved = true;
         _spriteRenderer.sprite = EvolutionData.PawnSprite;
+        _canEvolve = false;
+
+        AvailableDirections = EvolutionData.AvailableDirections;
     }
 
     public void ResetPawn()
@@ -29,7 +49,10 @@ public class EvolvablePawn : Pawn, IEvolvable
 
         _hasEvolved = false;
         _spriteRenderer.sprite = Data.PawnSprite;
+
+    
+        AvailableDirections = Data.AvailableDirections;
+
+        // don't reset CanEvolve because if the pawn is dropped on last grid pos, it can't evolve anymore
     }
-
-
 }

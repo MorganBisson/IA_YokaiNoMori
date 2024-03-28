@@ -106,7 +106,6 @@ public class GameManager : MonoBehaviour
             //newPlayer.InitPawns();
 
             _players.Add(newPlayer);
-            newPlayer.InitPawns();
 
         }
 
@@ -148,6 +147,8 @@ public class GameManager : MonoBehaviour
 
                 player.Pawns.Add(newPawn.Data.YokaiType, newPawn);
             }
+
+            player.InitPawns();
         }
        
     }

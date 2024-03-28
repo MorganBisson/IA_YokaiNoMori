@@ -103,4 +103,42 @@ public class CustomGrid : MonoBehaviour
         return neighbours;
     }
 
+    public bool CheckClickedOnGrid(Vector2 M)
+    {
+        float halfX = gridData.GridSize.x / 2;
+        float halfY = gridData.GridSize.y / 2;
+
+        Vector2 A = new(transform.position.x - halfX, transform.position.y + halfY);
+        Vector2 B = new(transform.position.x - halfX, transform.position.y - halfY);
+        Vector2 D = new(transform.position.x + halfX, transform.position.y + halfY);
+
+        //Vector2 C = new(transform.position.x + halfX, transform.position.y - halfY);
+
+        Vector2 AB = B - A;
+        Vector2 AD = D - A;
+        Vector2 AM = M - A;
+
+
+        float mousePosDotProd = Vector2.Dot(AM, AB);
+
+        float ABDotProd = Vector2.Dot(AB, AB);
+
+        if (0 < mousePosDotProd && mousePosDotProd < ABDotProd)
+        {
+            mousePosDotProd = Vector2.Dot(AM, AD);
+            float ADDotProd = Vector2.Dot(AD, AD);
+
+            if (0 < mousePosDotProd && mousePosDotProd < ADDotProd)
+            {
+                Debug.Log("Is in rectangle");
+                return true;
+            }
+        }
+
+        Debug.Log("Is not in rectangle");
+
+        return false;
+    }
+
+
 }

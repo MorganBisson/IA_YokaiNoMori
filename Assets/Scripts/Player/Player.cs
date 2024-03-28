@@ -53,15 +53,19 @@ public class Player
     {
         AddPawnToReserve(pawn);
 
-        IEvolvable evolvablePawn = pawn.GetComponent<IEvolvable>();
-
-        evolvablePawn?.ResetPawn();
+        pawn.OnCapture(this);
     }
 
     public void AddPawnToReserve(Pawn newPawn)
     {
         _reserve.AddPawnToReserve(_playerID, newPawn);
         PawnsInReserve.Add(newPawn.Data.YokaiType, newPawn);
+    }
+
+    public void OnPawnParachute(Pawn pawn)
+    {
+        _reserve.RemovePawnFromReserve(_playerID, pawn);
+        PawnsInReserve.Remove(pawn.Data.YokaiType);
     }
 
     public void LosePawn(Pawn pawn)

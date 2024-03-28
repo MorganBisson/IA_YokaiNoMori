@@ -23,8 +23,8 @@ public class PawnData : ScriptableObject
     public Sprite PawnSprite => _sprite;
 
     [SerializeField]
-    private Vector2[] _availableDirections;
-    public Vector2[] AvailableDirections => _availableDirections;
+    private Vector2Int[] _availableDirections;
+    public Vector2Int[] AvailableDirections => _availableDirections;
 
 
     [SerializeField]

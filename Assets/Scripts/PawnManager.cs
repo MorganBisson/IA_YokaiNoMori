@@ -6,11 +6,19 @@ using UnityEngine;
 public class PawnManager : MonoBehaviour
 {
 
+
+
+
     [SerializeField] private CustomGrid _customGrid;
     [SerializeField] private float _timeBetweenClicks;
 
     private Pawn _selectedPawn;
-    public Pawn SelectedPawn => _selectedPawn;
+    public Pawn SelectedPawn
+    {
+        get { return _selectedPawn; }
+        set { _selectedPawn = value; }
+    }
+
 
     private Camera _camera;
 
@@ -31,38 +39,129 @@ public class PawnManager : MonoBehaviour
             if (GameManager.Instance.IsGameInProgress == false)
             {
                 _clickCooldown = Time.time + _timeBetweenClicks;
-                Debug.Log("Clique");
                 OnPlayerClick();
             }
         }
     }
 
 
+    // This function handle situation when the player click on the custom grid;
     private void OnPlayerClick()
     {
 
         Cell clickedCell = GetClickedCell();
+
+        HandleParachute(clickedCell);
+
         if (clickedCell == null) return;
 
+        HandlePawnSelection(clickedCell);
 
+        if (_selectedPawn == null) return;
+
+        HandlePawnMovement(clickedCell);
+    }
+
+
+    #region Handle On Click
+
+    private void HandleParachute(Cell clickedCell)
+    {
+        if (CheckReservePawnSelected())
+        {
+            if (clickedCell == null) return;
+
+            if (CanParachute(clickedCell))
+            {
+                MovePawn(clickedCell);
+
+                if (_selectedPawn.Data.YokaiType == YokaiType.Kodama)
+                {
+                    CheckCanEvolve(clickedCell);
+                }
+
+                GameManager.Instance.CurrentPlayer.OnPawnParachute(_selectedPawn);
+                _selectedPawn.OnParachute();
+
+                _selectedPawn = null;
+
+                GameManager.Instance.NextPlayer();
+            }
+        }
+    }
+
+    private void HandlePawnMovement(Cell clickedCell)
+    {
+        if (CanMovePawn(clickedCell))
+        {
+            MovePawn(clickedCell);
+
+            if (_selectedPawn.Data.YokaiType == YokaiType.Kodama)
+            {
+                CheckCanEvolve(clickedCell);
+            }
+
+            GameManager.Instance.NextPlayer();
+
+
+
+            _selectedPawn = null;
+        }
+    }
+
+    private void HandlePawnSelection(Cell clickedCell)
+    {
         if (CanSelectPawn(clickedCell))
         {
             _selectedPawn = clickedCell.CurrentPawn;
             _previousClickedCell = clickedCell;
             return;
         }
-
-        if (_selectedPawn == null) return;
-
-
-        if (CanMovePawn(clickedCell))
-        {
-            MovePawn(clickedCell);
-            GameManager.Instance.NextPlayer();
-            _selectedPawn = null;
-        }
     }
 
+    #endregion
+
+
+
+    private bool CheckReservePawnSelected()
+    {
+        if (_selectedPawn == null) return false;
+
+        if (_selectedPawn.IsInReserve)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool CanParachute(Cell clickedCell)
+    {
+        return !clickedCell.HasPawnOnIt;
+    }
+
+    private void CheckCanEvolve(Cell cell)
+    {
+        EvolvablePawn pawn = _selectedPawn.GetComponent<EvolvablePawn>();
+
+        if (pawn.HasEvolved || !pawn.CanEvolve) return;
+
+        // Get the last grid pos of the opposite player 
+        // GameManager.Instance.Players[0] is the Player1 
+        Vector2Int[] lastRow = GameManager.Instance.CurrentPlayer == GameManager.Instance.Players[0] ? _customGrid.gridData.lastRow.Player2 : _customGrid.gridData.lastRow.Player1;
+
+
+        if (lastRow.Contains(cell.GridPos))
+        {
+            if (pawn.IsInReserve)
+            {
+                pawn.CanEvolve = false;
+                return;
+            }
+
+            pawn?.Evolve();
+        }
+    }
 
 
     private bool CanSelectPawn(Cell cell)
@@ -112,9 +211,9 @@ public class PawnManager : MonoBehaviour
 
     private bool CheckSelectedPawnDirection(Cell clickedCell)
     {
-        Vector2Int direction = new Vector2Int((int)(clickedCell.GridPos.x - _previousClickedCell.GridPos.x), (int)(clickedCell.GridPos.y - _previousClickedCell.GridPos.y));
+        Vector2Int direction = new(clickedCell.GridPos.x - _previousClickedCell.GridPos.x, clickedCell.GridPos.y - _previousClickedCell.GridPos.y);
 
-        if (_selectedPawn.Data.AvailableDirections.Contains(direction))
+        if (_selectedPawn.AvailableDirections.Contains(direction))
         {
             return true;
         }
@@ -127,6 +226,14 @@ public class PawnManager : MonoBehaviour
     {
         Vector3 mouseWorldPos = _camera.ScreenToWorldPoint(Input.mousePosition);
 
+        if (!_customGrid.CheckClickedOnGrid(mouseWorldPos))
+        {
+            //if (_selectedPawn != null && !_selectedPawn.IsInReserve)
+            //    _selectedPawn = null;
+
+            return null;
+        }
+
         Cell cell = _customGrid.CellFromWorldPoint(mouseWorldPos);
 
         //Debug.Log("grid pos x : " + cell.GridPos.x);
@@ -134,7 +241,6 @@ public class PawnManager : MonoBehaviour
 
         return cell;
     }
-
 
     private bool CanCapturePawn(Cell cell)
     {
