@@ -36,7 +36,7 @@ public class PawnManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && _clickCooldown <= Time.time)
         {
-            if (GameManager.Instance.IsGameInProgress == false)
+            if (GameManager.Instance.IsGameInProgress == true)
             {
                 _clickCooldown = Time.time + _timeBetweenClicks;
                 OnPlayerClick();
@@ -85,7 +85,7 @@ public class PawnManager : MonoBehaviour
 
                 _selectedPawn = null;
 
-                GameManager.Instance.NextPlayer();
+                GameManager.Instance.NextTurn();
             }
         }
     }
@@ -94,6 +94,8 @@ public class PawnManager : MonoBehaviour
     {
         if (CanMovePawn(clickedCell))
         {
+            GameManager.Instance.AddPawnMove(_selectedPawn, _previousClickedCell.GridPos, clickedCell.GridPos);
+
             MovePawn(clickedCell);
 
             if (_selectedPawn.Data.YokaiType == YokaiType.Kodama)
@@ -101,11 +103,12 @@ public class PawnManager : MonoBehaviour
                 CheckCanEvolve(clickedCell);
             }
 
-            GameManager.Instance.NextPlayer();
+            GameManager.Instance.NextTurn();
 
 
 
             _selectedPawn = null;
+            _previousClickedCell = null;
         }
     }
 
@@ -146,13 +149,10 @@ public class PawnManager : MonoBehaviour
 
         if (pawn.HasEvolved || !pawn.CanEvolve) return;
 
-        // Get the last grid pos of the opposite player 
-        // GameManager.Instance.Players[0] is the Player1 
-        Vector2Int[] lastRow = GameManager.Instance.CurrentPlayer == GameManager.Instance.Players[0] ? _customGrid.gridData.lastRow.Player2 : _customGrid.gridData.lastRow.Player1;
-
-
-        if (lastRow.Contains(cell.GridPos))
+        
+        if (GameManager.Instance.PawnIsOnGridLastRow(cell))
         {
+            // Check if the pawn comes from the reserve (which mean he is being parachuted)
             if (pawn.IsInReserve)
             {
                 pawn.CanEvolve = false;
@@ -190,6 +190,8 @@ public class PawnManager : MonoBehaviour
                    
                     GameManager.Instance.CurrentPlayer.CapturePawn(cell.CurrentPawn);
 
+                    GameManager.Instance.RemovePawnMove(cell.CurrentPawn);
+
                     GameManager.Instance.GetOtherPlayer().LosePawn(cell.CurrentPawn);
 
                 }
@@ -202,8 +204,6 @@ public class PawnManager : MonoBehaviour
 
     private void MovePawn(Cell newCell)
     {
-        _previousClickedCell.CurrentPawn = null;
-
         _selectedPawn.transform.DOMove(newCell.WorldPos , 0.5f);
 
         newCell.CurrentPawn = _selectedPawn;

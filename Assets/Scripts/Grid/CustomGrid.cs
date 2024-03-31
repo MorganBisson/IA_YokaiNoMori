@@ -130,12 +130,9 @@ public class CustomGrid : MonoBehaviour
 
             if (0 < mousePosDotProd && mousePosDotProd < ADDotProd)
             {
-                Debug.Log("Is in rectangle");
                 return true;
             }
         }
-
-        Debug.Log("Is not in rectangle");
 
         return false;
     }

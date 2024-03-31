@@ -1,5 +1,4 @@
 using DG.Tweening;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -8,6 +7,21 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+
+    public class PawnMove
+    {
+        public PawnMove(Pawn currentPawn, Vector2Int oldPosition, Vector2Int newPosition)
+        {
+            pawn = currentPawn;
+            oldPos = oldPosition;
+            currentPos = newPosition;
+        }
+
+        public Pawn pawn;
+        public Vector2Int currentPos;
+        public Vector2Int oldPos;
+    }
+
     private static GameManager _instance;
 
     public static GameManager Instance
@@ -40,7 +54,7 @@ public class GameManager : MonoBehaviour
 
     public List<Pawn> StartPawns => _startPawns;
 
-    private List<Player> _players = new List<Player>();
+    private List<Player> _players = new();
     public List<Player> Players => _players;
 
 
@@ -55,6 +69,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private ReserveManager reservePlayer2;
 
     [SerializeField] private TMP_Text txtPlayerTurn;
+
+
+    private List<PawnMove> _lastMoves = new();
+    public List<PawnMove> LastMoves => _lastMoves;
+
+    private int _turnCount;
+    List<int> _repetitionTurns = new();
+
+    private bool _drawGame = false;
 
 
     private void Awake()
@@ -72,31 +95,43 @@ public class GameManager : MonoBehaviour
         InitPlayers();
 
         SpawnPlayerPawns();
+
+        _isGameInProgress = true;
     }
 
-    public void NextPlayer()
+    public void NextTurn()
     {
-        // Vérifier si un joueur a gagné ou si il y a match nul avant de passer au prochain tour
-        //
-        if (CheckHasWon())
+
+        if (CheckHasWon() || CheckDraw())
         {
-            _currentPlayer.HasWon = true;
             EndGame();
             return;
         }
-            
-        // Passez au joueur suivant
-        if (_currentPlayer == _players[0])
-            _currentPlayer = _players[1];
-        else
-            _currentPlayer = _players[0];
+
+        NextPlayer();
 
         txtPlayerTurn.text = _currentPlayer.PlayerID == 0 ? "Player One" : "Player Two";
         txtPlayerTurn.transform.DOShakePosition(1f, 10f, 10);
 
+        // We need to check after switching player to check if the player has won before playing its move
         CheckHasWon();
+
+        _turnCount++;
     }
 
+    private void NextPlayer()
+    {
+        // Passez au joueur suivant
+        if (_currentPlayer == _players[0])
+        {
+            _currentPlayer = _players[1];
+        }
+        else
+        {
+            _currentPlayer = _players[0];
+
+        }
+    }
 
     private void InitPlayers()
     {
@@ -159,10 +194,135 @@ public class GameManager : MonoBehaviour
             return _players[1];
         else
             return _players[0];
-
-        
     }
+
+
     
+
+
+    #region Draw Functions
+    public bool CheckDraw()
+    {
+
+        if (_lastMoves.Count >= 4)
+        {
+            if (!CheckSamePawn()) return false;
+        }
+
+
+        if (_repetitionTurns.Count > 0)
+        {
+            if (_turnCount == _repetitionTurns.Last() + 4)
+            {
+                if (CheckForRepetition())
+                {
+                    if (_repetitionTurns.Count >= 3)
+                    {
+                        _drawGame = true;
+
+                        return _drawGame;
+                    }
+                }
+                else
+                {
+                    _repetitionTurns.Clear();
+                }
+            }
+        }
+        else
+        {
+            CheckForRepetition();
+        }
+
+        return _drawGame;
+    }
+
+    private bool CheckForRepetition()
+    {
+        if (_lastMoves.Count < 4 && _repetitionTurns.Count > 0)
+        {
+            _repetitionTurns.Clear();
+            return false;
+        }
+           
+
+        int rep = 0;
+
+        // We only need to check the the two first index of the list
+        for (int i = 0; i < _lastMoves.Count - 2; i++)
+        { 
+            if (_lastMoves[i].oldPos == _lastMoves[i + 2].currentPos)
+            {
+                rep++;
+            }
+            else
+            {
+                if (_repetitionTurns.Count > 0)
+                    _repetitionTurns.Clear();
+            }
+        }
+
+        if (rep == 2)
+        {
+            _repetitionTurns.Add(_turnCount);
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool CheckSamePawn()
+    {
+        int i = 0;
+
+        if (_currentPlayer == _players[1])
+            i = 1;
+
+        if (_lastMoves[i].pawn == _lastMoves[i + 2].pawn)
+            return true;
+
+        _repetitionTurns.Clear();
+
+        return false;
+    }
+
+
+    public PawnMove FindPawnMove(Pawn pawn)
+    {
+        for (int i = 0; i < _lastMoves.Count; i++)
+        {
+            if (_lastMoves[i].pawn == pawn)
+                return _lastMoves[i];
+        }
+
+        return null;
+    }
+
+    public void RemovePawnMove(Pawn pawn)
+    {
+        PawnMove pawnMove = FindPawnMove(pawn);
+
+        if (pawnMove == null) return;
+
+        _lastMoves.Remove(pawnMove);
+
+    }
+
+    public void AddPawnMove(Pawn pawn, Vector2Int oldPos, Vector2Int newPos)
+    {
+        PawnMove pawnMove = new(pawn, oldPos, newPos);
+
+        _lastMoves.Add(pawnMove);
+
+        if (_lastMoves.Count > 4)
+        {
+            _lastMoves.RemoveAt(0);
+        }
+    }
+
+    #endregion
+
+
 
     public bool CheckHasWon()
     {
@@ -192,7 +352,9 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
-    private bool PawnIsOnGridLastRow(Cell pawnCell)
+    
+
+    public bool PawnIsOnGridLastRow(Cell pawnCell)
     {
         Vector2Int[] lastRow;
 
@@ -235,18 +397,22 @@ public class GameManager : MonoBehaviour
 
     private void EndGame()
     {
-        _isGameInProgress = true;
-        Debug.Log("Player " + _currentPlayer.PlayerID + " has won !");
+        _isGameInProgress = false;
 
-        GameWinner.isWin = true;
-        GameWinner.WinPlayer = _currentPlayer;
+        if (_drawGame)
+        {
+            Debug.Log("Draw");
+        }
+        else
+        {
+            _currentPlayer.HasWon = true;
+            GameWinner.isWin = true;
+            GameWinner.WinPlayer = _currentPlayer;
+            SceneManager.LoadScene(2);
+        }
+        
 
-        SceneManager.LoadScene(2);
+        
     }
-
-    //private bool CheckForDraw()
-    //{
-
-    //}
 
 }

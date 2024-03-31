@@ -64,6 +64,7 @@ public class Player
     public void CapturePawn(Pawn pawn)
     {
         AddPawnToReserve(pawn);
+        
 
         pawn.OnCapture(this);
     }
