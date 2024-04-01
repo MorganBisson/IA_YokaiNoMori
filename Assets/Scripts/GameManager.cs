@@ -408,7 +408,7 @@ public class GameManager : MonoBehaviour
             _currentPlayer.HasWon = true;
             GameWinner.isWin = true;
             GameWinner.WinPlayer = _currentPlayer;
-            SceneManager.LoadScene(2);
+            SceneManager.LoadScene(3);
         }
         
 
