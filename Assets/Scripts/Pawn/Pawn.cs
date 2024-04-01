@@ -8,6 +8,10 @@ public class Pawn : MonoBehaviour
 {
     public PawnData Data;
 
+    private Vector2Int _currentGridPos;
+    public Vector2Int CurrentGridPos => _currentGridPos;
+
+
     private Vector2Int[] _availableDirection; 
 
     public Vector2Int[] AvailableDirections

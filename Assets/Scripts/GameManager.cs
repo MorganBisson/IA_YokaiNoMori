@@ -46,23 +46,28 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private List<Pawn> _startPawns;
+    public List<Pawn> StartPawns => _startPawns;
+
+    private Pawn[] _allPawns;
+    public Pawn[] AllPawns => _allPawns;
 
     [SerializeField]
     private Transform listPawnsTransform;
-
     public Transform ListPawnTransform => listPawnsTransform;
 
-    public List<Pawn> StartPawns => _startPawns;
+
 
     private List<Player> _players = new();
     public List<Player> Players => _players;
 
 
+
     private Player _currentPlayer;
     public Player CurrentPlayer => _currentPlayer;
 
-    private bool _isGameInProgress = false;
 
+
+    private bool _isGameInProgress = false;
     public bool IsGameInProgress => _isGameInProgress;
 
     [SerializeField] private ReserveManager reservePlayer1;
@@ -181,6 +186,8 @@ public class GameManager : MonoBehaviour
                 spawnCell.CurrentPawn = newPawn;
 
                 player.PawnsList.Add(newPawn);
+                
+                AllPawns.Append(newPawn);
             }
 
             player.InitPawns();
