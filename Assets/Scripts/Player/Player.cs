@@ -41,20 +41,6 @@ public class Player
         _reserve = reserve;
     }
 
-    public void InitPawns()
-    {
-        //foreach (KeyValuePair<YokaiType, Pawn> pawn in _pawns) 
-        //{ 
-        //    pawn.Value.OwningPlayer = this;
-        //    pawn.Value.InitializePawn();
-        //}
-
-        foreach (Pawn pawn in _pawnsList)
-        {
-            pawn.OwningPlayer = this;
-            pawn.InitializePawn();
-        }
-    }
 
     public bool CanPlay()
     {

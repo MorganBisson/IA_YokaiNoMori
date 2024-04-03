@@ -9,7 +9,11 @@ public class Pawn : MonoBehaviour
     public PawnData Data;
 
     private Vector2Int _currentGridPos;
-    public Vector2Int CurrentGridPos => _currentGridPos;
+    public Vector2Int CurrentGridPos
+    {
+        get { return _currentGridPos; }
+        set { _currentGridPos = value; }
+    }
 
 
     private Vector2Int[] _availableDirection; 
@@ -34,6 +38,7 @@ public class Pawn : MonoBehaviour
         set { _isInReserve = value; } 
     }
 
+
     private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -55,8 +60,6 @@ public class Pawn : MonoBehaviour
         _spriteRenderer.sprite = Data.PawnSprite;
 
         _availableDirection = Data.AvailableDirections;
-
-        //transform.position = _data.SpawnPosition;
     }
 
     public virtual void OnCapture(Player newOwningPlayer)
@@ -82,6 +85,14 @@ public class Pawn : MonoBehaviour
         DisableReserveComponents();
         _isInReserve = false;
     }
+
+
+    public List<Vector2Int> GetPossibleMoves(CustomGrid customGrid)
+    {
+        return new();
+    }
+
+
 
 
 

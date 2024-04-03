@@ -5,12 +5,12 @@ using UnityEngine;
 public class HandleReserveClick : MonoBehaviour
 {
 
-    [SerializeField] private PawnManager _pawnManager;
+    [SerializeField] private BoardManager _boardManager;
 
 
     private void Start()
     {
-        _pawnManager = GameObject.Find("PawnManager").GetComponent<PawnManager>();
+        _boardManager = GameObject.Find("PawnManager").GetComponent<BoardManager>();
 
         _selfPawn = GetComponent<Pawn>();
     }
@@ -21,8 +21,8 @@ public class HandleReserveClick : MonoBehaviour
        
         if (GameManager.Instance.CurrentPlayer != _selfPawn.OwningPlayer) return;
 
-        _pawnManager.SelectedPawn = _selfPawn;
+        _boardManager.SelectedPawn = _selfPawn;
 
-        Debug.Log(_pawnManager.SelectedPawn.name);
+        Debug.Log(_boardManager.SelectedPawn.name);
     }
 }

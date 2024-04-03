@@ -1,16 +1,40 @@
 using DG.Tweening;
+using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class PawnManager : MonoBehaviour
+public class BoardManager : MonoBehaviour
 {
+
+    private static BoardManager _instance;
+
+    public static BoardManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<BoardManager>();
+            }
+
+            return _instance;
+        }
+    }
 
 
 
 
     [SerializeField] private CustomGrid _customGrid;
     [SerializeField] private float _timeBetweenClicks;
+    [SerializeField] private Transform _listPawnsTransform;
+    public Transform ListPawnsTransform => _listPawnsTransform;
+
+    [Header("PAWN START")]
+    [Tooltip("The pawns which every players start with")]
+    [SerializeField] private List<Pawn> _startPawns;
+    public List<Pawn> StartPawns => _startPawns;
+
 
     private Pawn _selectedPawn;
     public Pawn SelectedPawn
@@ -20,6 +44,11 @@ public class PawnManager : MonoBehaviour
     }
 
 
+    private Pawn[] _allPawns;
+    public Pawn[] AllPawns => _allPawns;
+
+
+
     private Camera _camera;
 
     private Cell _previousClickedCell;
@@ -27,8 +56,16 @@ public class PawnManager : MonoBehaviour
     private float _clickCooldown; 
 
 
+    
+
+
     private void Awake()
     {
+        if (_instance == null)
+        {
+            _instance = this;
+        }
+
         _camera = Camera.main;
     }
 
@@ -43,6 +80,47 @@ public class PawnManager : MonoBehaviour
             }
         }
     }
+
+
+
+
+    public void SpawnPawns(Player player)
+    {
+        List<Pawn> copyList = new List<Pawn>(_startPawns);
+
+        foreach (Pawn pawn in copyList)
+        {
+            PawnData.SpawnPosition spawnPosData = pawn.Data.PawnSpawnPosition;
+            Quaternion spawnRotation;
+            Cell spawnCell;
+
+
+            if (player.PlayerID == 0)
+            {
+                spawnCell = _customGrid.GridCells[spawnPosData.Player1.x, spawnPosData.Player1.y];
+                spawnRotation = Quaternion.identity;
+            }
+            else
+            {
+                spawnCell = _customGrid.GridCells[spawnPosData.Player2.x, spawnPosData.Player2.y];
+                spawnRotation = Quaternion.Euler(180, 0, 0);
+            }
+
+
+            Pawn newPawn = Instantiate(pawn, spawnCell.WorldPos, spawnRotation, _listPawnsTransform);
+            newPawn.OwningPlayer = player;
+            newPawn.CurrentGridPos = spawnCell.GridPos;
+            newPawn.InitializePawn();
+
+
+            spawnCell.CurrentPawn = newPawn;
+
+            player.PawnsList.Add(newPawn);
+
+            _allPawns.Append(newPawn);
+        }
+    }
+
 
 
     // This function handle situation when the player click on the custom grid;

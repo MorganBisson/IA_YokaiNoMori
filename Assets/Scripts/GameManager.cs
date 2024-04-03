@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
 
+    // used to check if there is a draw
     public class PawnMove
     {
         public PawnMove(Pawn currentPawn, Vector2Int oldPosition, Vector2Int newPosition)
@@ -21,6 +22,7 @@ public class GameManager : MonoBehaviour
         public Vector2Int currentPos;
         public Vector2Int oldPos;
     }
+
 
     private static GameManager _instance;
 
@@ -39,22 +41,10 @@ public class GameManager : MonoBehaviour
 
 
     [SerializeField] private CustomGrid _grid;
-    [SerializeField] private PawnManager _pawnManager;
+    [SerializeField] private BoardManager _boardManager;
 
-    [Header("PAWN START")]
-    [Tooltip("The pawns which every players start with")]
 
-    [SerializeField]
-    private List<Pawn> _startPawns;
-    public List<Pawn> StartPawns => _startPawns;
-
-    private Pawn[] _allPawns;
-    public Pawn[] AllPawns => _allPawns;
-
-    [SerializeField]
-    private Transform listPawnsTransform;
-    public Transform ListPawnTransform => listPawnsTransform;
-
+    public Transform ListPawnTransform => _boardManager.ListPawnsTransform;
 
 
     private List<Player> _players = new();
@@ -69,6 +59,7 @@ public class GameManager : MonoBehaviour
 
     private bool _isGameInProgress = false;
     public bool IsGameInProgress => _isGameInProgress;
+
 
     [SerializeField] private ReserveManager reservePlayer1;
     [SerializeField] private ReserveManager reservePlayer2;
@@ -160,39 +151,8 @@ public class GameManager : MonoBehaviour
     {
         foreach (Player player in _players)
         {
-            List<Pawn> copyList = new List<Pawn>(_startPawns);
-
-            foreach (Pawn pawn in copyList)
-            {
-                PawnData.SpawnPosition spawnPosData = pawn.Data.PawnSpawnPosition;
-                Quaternion spawnRotation;
-                Cell spawnCell;
-    
-
-                if (player.PlayerID == 0)
-                {
-                    spawnCell = _grid.GridCells[spawnPosData.Player1.x, spawnPosData.Player1.y];
-                    spawnRotation = Quaternion.identity;
-                } 
-                else
-                {
-                    spawnCell = _grid.GridCells[spawnPosData.Player2.x, spawnPosData.Player2.y];
-                    spawnRotation = Quaternion.Euler(180, 0, 0);
-                }
-
-                Pawn newPawn = Instantiate(pawn, spawnCell.WorldPos, spawnRotation, listPawnsTransform);
-                newPawn.OwningPlayer = player;
-
-                spawnCell.CurrentPawn = newPawn;
-
-                player.PawnsList.Add(newPawn);
-                
-                AllPawns.Append(newPawn);
-            }
-
-            player.InitPawns();
+            _boardManager.SpawnPawns(player);
         }
-       
     }
 
     public Player GetOtherPlayer()
@@ -349,7 +309,7 @@ public class GameManager : MonoBehaviour
 
         if (PawnIsOnGridLastRow(pawnCell))
         {
-            if (koropokkuru != null && koropokkuru == _pawnManager.SelectedPawn)
+            if (koropokkuru != null && koropokkuru == _boardManager.SelectedPawn)
             {
                 // if neighbour can't capture, player has won so we need to return the opposite value
                 return !CheckNeighboursCanCapture(pawnCell);
