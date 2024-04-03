@@ -22,10 +22,12 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-
+    [SerializeField] private MinimaxIA _minimaxIA;
 
 
     [SerializeField] private CustomGrid _customGrid;
+    public CustomGrid CustomGrid => _customGrid;
+
     [SerializeField] private float _timeBetweenClicks;
     [SerializeField] private Transform _listPawnsTransform;
     public Transform ListPawnsTransform => _listPawnsTransform;
@@ -127,34 +129,48 @@ public class BoardManager : MonoBehaviour
     // This function handle situation when the player click on the custom grid;
     private void OnPlayerClick()
     {
-
+       
         Cell clickedCell = GetClickedCell();
 
-        HandleParachute(clickedCell);
+        if (GameManager.Instance.CurrentPlayer.PlayerID == 1)
+        {
+            Pawn pawn = GameManager.Instance.CurrentPlayer.PawnsList[Random.Range(0, GameManager.Instance.CurrentPlayer.PawnsList.Count)];
 
-        if (clickedCell == null) return;
+            _minimaxIA.Minimax(pawn.CurrentGridPos, 3, Mathf.NegativeInfinity, Mathf.Infinity, false);
 
-        HandlePawnSelection(clickedCell);
+            GameManager.Instance.NextTurn();
+        }
+        else
+        {
+            // If it returns true, it means the player has parachuted a pawn, so we don't need to go further
+            if(HandleParachute(clickedCell)) return;
 
-        if (_selectedPawn == null) return;
+            if (clickedCell == null) return;
 
-        HandlePawnMovement(clickedCell);
+            // If it returns true, it means the player has selected a pawn, so we don't need to go further
+            if (HandlePawnSelection(clickedCell)) return;
+
+            if (_selectedPawn == null) return;
+
+            // If it returns true, it means the player has moved the selected pawn, so we don't need to go further
+            if (HandlePawnMovement(clickedCell)) return;
+        }
     }
 
 
     #region Handle On Click
 
-    private void HandleParachute(Cell clickedCell)
+    private bool HandleParachute(Cell clickedCell)
     {
         if (CheckReservePawnSelected())
         {
-            if (clickedCell == null) return;
+            if (clickedCell == null) return false;
 
             if (CanParachute(clickedCell))
             {
                 MovePawn(clickedCell);
 
-                if (_selectedPawn.Data.YokaiType == YokaiType.Kodama)
+                if (_selectedPawn.Type == YokaiType.Kodama)
                 {
                     CheckCanEvolve(clickedCell);
                 }
@@ -165,11 +181,14 @@ public class BoardManager : MonoBehaviour
                 _selectedPawn = null;
 
                 GameManager.Instance.NextTurn();
+
+                return true;
             }
         }
+        return false;
     }
 
-    private void HandlePawnMovement(Cell clickedCell)
+    private bool HandlePawnMovement(Cell clickedCell)
     {
         if (CanMovePawn(clickedCell))
         {
@@ -177,7 +196,7 @@ public class BoardManager : MonoBehaviour
 
             MovePawn(clickedCell);
 
-            if (_selectedPawn.Data.YokaiType == YokaiType.Kodama)
+            if (_selectedPawn.Type == YokaiType.Kodama)
             {
                 CheckCanEvolve(clickedCell);
             }
@@ -186,17 +205,23 @@ public class BoardManager : MonoBehaviour
 
             _selectedPawn = null;
             _previousClickedCell = null;
+
+            return true;
         }
+
+        return false;
     }
 
-    private void HandlePawnSelection(Cell clickedCell)
+    private bool HandlePawnSelection(Cell clickedCell)
     {
         if (CanSelectPawn(clickedCell))
         {
             _selectedPawn = clickedCell.CurrentPawn;
             _previousClickedCell = clickedCell;
-            return;
+            return true;
         }
+
+        return false;
     }
 
     #endregion
@@ -287,7 +312,8 @@ public class BoardManager : MonoBehaviour
         _selectedPawn.CurrentGridPos = newCell.GridPos;
         newCell.CurrentPawn = _selectedPawn;
 
-        _previousClickedCell.CurrentPawn = null;
+        if (_previousClickedCell != null)
+            _previousClickedCell.CurrentPawn = null;
     }
 
 

@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Data: {fileID: 11400000, guid: f680906c75cf79b40bec74c32fb6ed95, type: 2}
-  AvailableDirections: []
+  _value: 10
   EvolutionData: {fileID: 11400000, guid: c0f7ac79581dc99499aabf0d56334605, type: 2}
 --- !u!114 &1381888406262614713
 MonoBehaviour:
@@ -114,7 +114,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a819a89e0ba5c94caa2323e2b6a2299, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pawnManager: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
 --- !u!61 &7467779501491797948
 BoxCollider2D:
   m_ObjectHideFlags: 0

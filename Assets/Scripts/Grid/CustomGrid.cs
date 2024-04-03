@@ -137,5 +137,17 @@ public class CustomGrid : MonoBehaviour
         return false;
     }
 
+    public List<Cell> GetEmptyCells()
+    {
+        List<Cell> emptyCells = new();
+
+        foreach (Cell cell in _grid)
+        {
+            if (!cell.HasPawnOnIt)
+                emptyCells.Add(cell);
+        }
+
+        return emptyCells;
+    }
 
 }

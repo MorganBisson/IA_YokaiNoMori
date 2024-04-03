@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -8,13 +9,20 @@ public class Pawn : MonoBehaviour
 {
     public PawnData Data;
 
+    [SerializeField] protected int _value;
+    public int Value => _value;
+
+
+    protected YokaiType _type;
+    public YokaiType Type => _type;
+
+
     private Vector2Int _currentGridPos;
     public Vector2Int CurrentGridPos
     {
         get { return _currentGridPos; }
         set { _currentGridPos = value; }
     }
-
 
     private Vector2Int[] _availableDirection; 
 
@@ -56,9 +64,11 @@ public class Pawn : MonoBehaviour
 
     public void InitializePawn()
     {
+
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _spriteRenderer.sprite = Data.PawnSprite;
 
+        _type = Data.YokaiType;
         _availableDirection = Data.AvailableDirections;
     }
 
@@ -87,9 +97,41 @@ public class Pawn : MonoBehaviour
     }
 
 
-    public List<Vector2Int> GetPossibleMoves(CustomGrid customGrid)
+    public List<Cell> GetPossibleMoves(CustomGrid customGrid)
     {
-        return new();
+        if (IsInReserve)
+        {
+            return customGrid.GetEmptyCells();
+        }
+
+
+        List<Cell> neighbours = customGrid.GetNeighbours(customGrid.GridCells[_currentGridPos.x, _currentGridPos.y]);
+        List<Cell> possibleMoves = new();
+
+        foreach (Cell cell in neighbours)
+        {
+            var directionToCell = cell.GridPos - _currentGridPos;
+
+            if (OwningPlayer.PlayerID == 1)
+                directionToCell *= 1;
+
+            if (AvailableDirections.Contains(directionToCell))
+            {
+                if (cell.HasPawnOnIt)
+                {
+                    // if the owning player of the pawn on the cell is not the same as the current player, we can move on it and capture 
+                    if (cell.CurrentPawn.OwningPlayer != GameManager.Instance.CurrentPlayer)
+                        possibleMoves.Add(cell);
+
+                }
+                else
+                {
+                    possibleMoves.Add(cell);
+                }
+            }
+        }
+
+        return possibleMoves;
     }
 
 
@@ -108,5 +150,6 @@ public class Pawn : MonoBehaviour
         _boxCollider.enabled = false;
         _handleReserveClick.enabled = false;
     }
+
 
 }

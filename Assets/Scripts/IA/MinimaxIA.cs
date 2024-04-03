@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -13,53 +14,84 @@ public class MinimaxIA : MonoBehaviour
 {
 
     private List<Pawn> _allPawns => BoardManager.Instance.AllPawns;
+    private CustomGrid _customGrid => BoardManager.Instance.CustomGrid;
+
+
+
 
     // Minimax with Alpha Beta implemented 
-    int Minimax(Vector2Int position, int depth, float alpha, float beta, bool maximizingPlayer)
+    // Set maximizing player to false when we call the function (since the AI will always be player 2)
+    public int Minimax(Vector2Int currentPos, int depth, float alpha, float beta, bool maximizingPlayer)
     {
         if (depth == 0 || !GameManager.Instance.IsGameInProgress)
         {
-            //int value = StaticEvaluationFunction(position);
+            int value = StaticEvaluationFunction(currentPos);
 
-            //return value;
+            return value;
         }
             
         
         if (maximizingPlayer) 
         {
-            int maxEval = int.MinValue;
-
+ 
             // Get les positions disponibles pour le pion séléctionner ?
             // Ou Get toutes les positions disponibles pour chaque pion
-            // créer une fonction qui return les directions positions disponibles ? 
-            foreach (Pawn pawn in _allPawns)
+            // créer une fonction qui return les directions positions disponibles ?
+
+            List<Pawn> pawnsCopy = new List<Pawn>(_allPawns);
+
+            int maxEval = int.MinValue;
+
+            foreach (Pawn pawn in pawnsCopy)
             {
-                var eval = Minimax(pawn.CurrentGridPos, depth - 1, Mathf.NegativeInfinity, Mathf.Infinity, false);
-                
-                maxEval = Mathf.Max(maxEval, eval);
-                alpha = Mathf.Max(alpha, eval);
 
-                if (beta <= alpha)
-                    break;
+                List<Cell> possibleMoves = pawn.GetPossibleMoves(_customGrid);
 
+                foreach (Cell cell in possibleMoves)
+                {
+                    pawn.CurrentGridPos = cell.GridPos;
+
+                    var eval = Minimax(pawn.CurrentGridPos, depth - 1, Mathf.NegativeInfinity, Mathf.Infinity, false);
+
+                    maxEval = Mathf.Max(maxEval, eval);
+                    alpha = Mathf.Max(alpha, eval);
+
+                    if (beta <= alpha)
+                        break;
+
+                    //int nextCellValue = Minimax(pawn.CurrentGridPos, depth - 1, Mathf.NegativeInfinity, Mathf.Infinity, false);
+                }
             }
 
             return maxEval;
+
+
         }
         else
         {
+            List<Pawn> pawnsCopy = new List<Pawn>(_allPawns);
+
             int minEval = int.MaxValue;
 
-            foreach (Pawn pawn in _allPawns)
+            foreach (Pawn pawn in pawnsCopy)
             {
-                var eval = Minimax(pawn.CurrentGridPos, depth - 1, Mathf.NegativeInfinity, Mathf.Infinity, true);
 
-                minEval = Mathf.Min(minEval, eval);
-                beta = Mathf.Min(beta, eval);
+                List<Cell> possibleMoves = pawn.GetPossibleMoves(_customGrid);
 
-                if (beta <= alpha)
-                    break;
+                foreach (Cell cell in possibleMoves)
+                {
+                    pawn.CurrentGridPos = cell.GridPos;
 
+                    var eval = Minimax(pawn.CurrentGridPos, depth - 1, Mathf.NegativeInfinity, Mathf.Infinity, false);
+
+                    minEval = Mathf.Min(minEval, eval);
+                    beta = Mathf.Min(beta, eval);
+
+                    if (beta <= alpha)
+                        break;
+
+                    //int nextCellValue = Minimax(pawn.CurrentGridPos, depth - 1, Mathf.NegativeInfinity, Mathf.Infinity, false);
+                }
             }
 
             return minEval;
@@ -69,7 +101,6 @@ public class MinimaxIA : MonoBehaviour
 
 
     }
-
 
 
     //private int AlphaBeta(int depth, bool isMax, int alpha, int beta)
@@ -234,33 +265,29 @@ public class MinimaxIA : MonoBehaviour
 
 
 
-    //private int StaticEvaluationFunction(Vector2Int currentPos)
-    //{
-    //    int TotalScore = 0;
-    //    int curr = 0;
-    //    foreach (Pawn pawn in _allPawns)
-    //    {
-    //        pawn.
+    private int StaticEvaluationFunction(Vector2Int currentPos)
+    {
+        int TotalScore = 0;
+        int curr;
 
-    //        if (pawn.GetType() == typeof(King))
-    //            curr = 900;
-    //        if (pawn.GetType() == typeof(Queen))
-    //            curr = 90;
-    //        if (pawn.GetType() == typeof(Rook))
-    //            curr = 50;
-    //        if (pawn.GetType() == typeof(Bishup))
-    //            curr = 30;
-    //        if (pawn.GetType() == typeof(Knight))
-    //            curr = 30;
-    //        if (pawn.GetType() == typeof(Pawn))
-    //            curr = 10;
+        Cell cell = _customGrid.GridCells[currentPos.x, currentPos.y];
 
-    //        if (pawn.OwningPlayer == GameManager.Instance.Players[0])
-    //            TotalScore -= curr;
-    //        else
-    //            TotalScore += curr;
-    //    }
-    //    return TotalScore;
-    //}
+        if (cell.HasPawnOnIt) 
+        {
+            curr = cell.CurrentPawn.Value;
+        }
+
+        foreach (Pawn pawn in _allPawns)
+        {
+            curr = pawn.Value;
+
+            // if player 1, total score value is positive
+            if (pawn.OwningPlayer == GameManager.Instance.Players[0])
+                TotalScore += curr;
+            else
+                TotalScore -= curr;
+        }
+        return TotalScore;   
+    }
 
 }

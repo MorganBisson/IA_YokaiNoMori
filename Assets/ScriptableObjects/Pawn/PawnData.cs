@@ -31,7 +31,10 @@ public class PawnData : ScriptableObject
     private SpawnPosition _spawnPosition;
 
     public SpawnPosition PawnSpawnPosition => _spawnPosition;
+
 }
+
+
 
 public enum YokaiType
 {

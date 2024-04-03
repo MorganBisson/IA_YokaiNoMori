@@ -84,7 +84,7 @@ public class Player
     {
         for (int i = 0; i < _pawnsList.Count; i++) 
         {
-            if (_pawnsList[i].Data.YokaiType == YokaiType.Koropokkuru)
+            if (_pawnsList[i].Type == YokaiType.Koropokkuru)
             {
                 return _pawnsList[i];
             }

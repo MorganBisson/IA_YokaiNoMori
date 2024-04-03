@@ -838,6 +838,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _debugGrid: 0
   gridData: {fileID: 11400000, guid: c761393e722365d429e7d45f74a2c6fd, type: 2}
+--- !u!1 &769482320
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 769482321}
+  - component: {fileID: 769482322}
+  m_Layer: 0
+  m_Name: Minimax
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &769482321
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769482320}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.3830943, y: -3.5592446, z: -0.024766354}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &769482322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769482320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19e91107de3bf5e44beb92b03e708316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &808115687
 GameObject:
   m_ObjectHideFlags: 0
@@ -1963,6 +2007,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 412543190}
     - target: {fileID: 6669646491147807585, guid: 3e66d0bac734e5044adc6bb5cd39b23b, type: 3}
+      propertyPath: _boardManager
+      value: 
+      objectReference: {fileID: 412543190}
+    - target: {fileID: 6669646491147807585, guid: 3e66d0bac734e5044adc6bb5cd39b23b, type: 3}
       propertyPath: txtPlayerTurn
       value: 
       objectReference: {fileID: 2001337575}
@@ -2048,12 +2096,40 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
+      propertyPath: _minimaxIA
+      value: 
+      objectReference: {fileID: 769482322}
+    - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
       propertyPath: _customGrid
       value: 
       objectReference: {fileID: 685099729}
+    - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
+      propertyPath: _listPawnsTransform
+      value: 
+      objectReference: {fileID: 2035229078}
+    - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
+      propertyPath: _startPawns.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
+      propertyPath: _startPawns.Array.data[0]
+      value: 
+      objectReference: {fileID: 3562877405091614653, guid: bc93778d8768c1545a7d4e5e39437033, type: 3}
+    - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
+      propertyPath: _startPawns.Array.data[1]
+      value: 
+      objectReference: {fileID: -5930610970260876325, guid: f3eed09b6a70e0748b8a73451bdba493, type: 3}
+    - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
+      propertyPath: _startPawns.Array.data[2]
+      value: 
+      objectReference: {fileID: 3562877405091614653, guid: 1ae348652fd96074d8948b801f3691c5, type: 3}
+    - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
+      propertyPath: _startPawns.Array.data[3]
+      value: 
+      objectReference: {fileID: 3562877405091614653, guid: 53045ad6061375749a3021170020ace0, type: 3}
     - target: {fileID: 6727867001573013804, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
       propertyPath: m_Name
-      value: PawnManager
+      value: BoardManager
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2067,6 +2143,7 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 685099728}
   - {fileID: 808115688}
+  - {fileID: 769482321}
   - {fileID: 3051386091969756248}
   - {fileID: 7693014174511609256}
   - {fileID: 176577893}

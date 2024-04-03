@@ -125,7 +125,6 @@ public class GameManager : MonoBehaviour
         else
         {
             _currentPlayer = _players[0];
-
         }
     }
 
@@ -297,7 +296,7 @@ public class GameManager : MonoBehaviour
         {
             Pawn lastCapturedPawn = _currentPlayer._ReserveList.Last();
 
-            if (lastCapturedPawn.Data.YokaiType == YokaiType.Koropokkuru)
+            if (lastCapturedPawn.Type == YokaiType.Koropokkuru)
             {
                 return true;
             }

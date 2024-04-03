@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Cell
@@ -11,6 +12,9 @@ public class Cell
     public Vector2Int GridPos;
 
     public Pawn CurrentPawn;
+
+    private int _value = 10;
+    public int Value => _value;
 
 
     public Cell(Vector2 worldPos, Vector2Int gridPos)
