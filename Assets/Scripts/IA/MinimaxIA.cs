@@ -12,7 +12,7 @@ using UnityEngine;
 public class MinimaxIA : MonoBehaviour
 {
 
-    private Pawn[] _allPawns => BoardManager.Instance.AllPawns;
+    private List<Pawn> _allPawns => BoardManager.Instance.AllPawns;
 
     // Minimax with Alpha Beta implemented 
     int Minimax(Vector2Int position, int depth, float alpha, float beta, bool maximizingPlayer)

@@ -44,8 +44,8 @@ public class BoardManager : MonoBehaviour
     }
 
 
-    private Pawn[] _allPawns;
-    public Pawn[] AllPawns => _allPawns;
+    private List<Pawn> _allPawns = new();
+    public List<Pawn> AllPawns => _allPawns;
 
 
 
@@ -117,7 +117,8 @@ public class BoardManager : MonoBehaviour
 
             player.PawnsList.Add(newPawn);
 
-            _allPawns.Append(newPawn);
+            _allPawns.Add(newPawn);
+
         }
     }
 
@@ -182,8 +183,6 @@ public class BoardManager : MonoBehaviour
             }
 
             GameManager.Instance.NextTurn();
-
-
 
             _selectedPawn = null;
             _previousClickedCell = null;
@@ -272,6 +271,7 @@ public class BoardManager : MonoBehaviour
 
                     GameManager.Instance.GetOtherPlayer().LosePawn(cell.CurrentPawn);
 
+                    //cell.CurrentPawn = null;
                 }
             }
             return true;
@@ -284,7 +284,10 @@ public class BoardManager : MonoBehaviour
     {
         _selectedPawn.transform.DOMove(newCell.WorldPos , 0.5f);
 
+        _selectedPawn.CurrentGridPos = newCell.GridPos;
         newCell.CurrentPawn = _selectedPawn;
+
+        _previousClickedCell.CurrentPawn = null;
     }
 
 

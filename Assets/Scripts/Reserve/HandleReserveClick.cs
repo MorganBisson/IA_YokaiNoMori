@@ -5,12 +5,12 @@ using UnityEngine;
 public class HandleReserveClick : MonoBehaviour
 {
 
-    [SerializeField] private BoardManager _boardManager;
+    private BoardManager _boardManager;
 
 
     private void Start()
     {
-        _boardManager = GameObject.Find("PawnManager").GetComponent<BoardManager>();
+        _boardManager = GameObject.Find("BoardManager").GetComponent<BoardManager>();
 
         _selfPawn = GetComponent<Pawn>();
     }

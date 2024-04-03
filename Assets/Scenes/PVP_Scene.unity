@@ -2059,6 +2059,26 @@ PrefabInstance:
       propertyPath: _listPawnsTransform
       value: 
       objectReference: {fileID: 2035229078}
+    - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
+      propertyPath: _startPawns.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
+      propertyPath: _startPawns.Array.data[0]
+      value: 
+      objectReference: {fileID: 3562877405091614653, guid: bc93778d8768c1545a7d4e5e39437033, type: 3}
+    - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
+      propertyPath: _startPawns.Array.data[1]
+      value: 
+      objectReference: {fileID: -5930610970260876325, guid: f3eed09b6a70e0748b8a73451bdba493, type: 3}
+    - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
+      propertyPath: _startPawns.Array.data[2]
+      value: 
+      objectReference: {fileID: 3562877405091614653, guid: 1ae348652fd96074d8948b801f3691c5, type: 3}
+    - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
+      propertyPath: _startPawns.Array.data[3]
+      value: 
+      objectReference: {fileID: 3562877405091614653, guid: 53045ad6061375749a3021170020ace0, type: 3}
     - target: {fileID: 6727867001573013804, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
       propertyPath: m_Name
       value: BoardManager
