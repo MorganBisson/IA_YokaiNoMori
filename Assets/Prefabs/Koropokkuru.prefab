@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Data: {fileID: 11400000, guid: b49b2a6a2ecb7894c9c0ad13c7ff8c5a, type: 2}
-  _value: 80
+  _value: 800
 --- !u!114 &1975049635482723460
 MonoBehaviour:
   m_ObjectHideFlags: 0

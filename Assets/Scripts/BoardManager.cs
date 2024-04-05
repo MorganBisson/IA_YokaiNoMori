@@ -118,6 +118,7 @@ public class BoardManager : MonoBehaviour
             spawnCell.CurrentPawn = newPawn;
 
             player.PawnsList.Add(newPawn);
+            player.AllOwnedPawns.Add(newPawn);
 
             _allPawns.Add(newPawn);
 

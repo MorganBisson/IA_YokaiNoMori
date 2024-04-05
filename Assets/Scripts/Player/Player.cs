@@ -18,6 +18,9 @@ public class Player
     private List<Pawn> _reserveList = new();
     public List<Pawn> _ReserveList => _reserveList;
 
+    private List<Pawn> _allOwnedPawns = new();
+    public List<Pawn> AllOwnedPawns => _allOwnedPawns;
+
 
     // Pawns the player has on the reserve
     //private Dictionary<YokaiType, Pawn> _pawnsInReserve = new();
@@ -62,6 +65,7 @@ public class Player
 
         _reserveList.Add(newPawn);
         _reserve.AddPawnToReserve(_playerID, newPawn);
+        _allOwnedPawns.Add(newPawn);
     }
 
     public void OnPawnParachute(Pawn pawn)
@@ -77,6 +81,7 @@ public class Player
 
     public void LosePawn(Pawn pawn)
     {
+        _allOwnedPawns.Remove(pawn);
         _pawnsList.Remove(pawn);
     }
 

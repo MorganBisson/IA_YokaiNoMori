@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.NetworkInformation;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -16,7 +17,8 @@ public class MinimaxIA : MonoBehaviour
     private List<Pawn> _allPawns => BoardManager.Instance.AllPawns;
     private CustomGrid _customGrid => BoardManager.Instance.CustomGrid;
 
-
+    private Player _player1 => GameManager.Instance.Players[0];
+    private Player _player2 => GameManager.Instance.Players[1];
 
 
     // Minimax with Alpha Beta implemented 
@@ -38,28 +40,44 @@ public class MinimaxIA : MonoBehaviour
             // Ou Get toutes les positions disponibles pour chaque pion
             // créer une fonction qui return les directions positions disponibles ?
 
-            List<Pawn> pawnsCopy = new List<Pawn>(_allPawns);
+            //List<Pawn> pawnsCopy = new List<Pawn>(_allPawns);
 
             int maxEval = int.MinValue;
 
-            foreach (Pawn pawn in pawnsCopy)
+            foreach (Pawn pawn in _player1.AllOwnedPawns)
             {
 
                 List<Cell> possibleMoves = pawn.GetPossibleMoves(_customGrid);
 
                 foreach (Cell cell in possibleMoves)
                 {
+                    Vector2Int baseCurrentGridPos = pawn.CurrentGridPos;
+                    Cell baseCell = _customGrid.GridCells[baseCurrentGridPos.x, baseCurrentGridPos.y];
+
+                    // Making the move so we can simulate what will happen next
+                    baseCell.CurrentPawn = null;
                     pawn.CurrentGridPos = cell.GridPos;
+                    cell.CurrentPawn = pawn;
+
+
 
                     var eval = Minimax(pawn.CurrentGridPos, depth - 1, Mathf.NegativeInfinity, Mathf.Infinity, false);
 
+
+
+                    // Reseting the board's cells and pawn to their previous state
+                    baseCell.CurrentPawn = pawn;
+                    pawn.CurrentGridPos = baseCurrentGridPos;
+                    cell.CurrentPawn = null;
+
+
+
                     maxEval = Mathf.Max(maxEval, eval);
-                    alpha = Mathf.Max(alpha, eval);
+                    beta = Mathf.Max(beta, eval);
 
                     if (beta <= alpha)
                         break;
 
-                    //int nextCellValue = Minimax(pawn.CurrentGridPos, depth - 1, Mathf.NegativeInfinity, Mathf.Infinity, false);
                 }
             }
 
@@ -69,20 +87,32 @@ public class MinimaxIA : MonoBehaviour
         }
         else
         {
-            List<Pawn> pawnsCopy = new List<Pawn>(_allPawns);
+            //List<Pawn> pawnsCopy = new List<Pawn>(_allPawns);
 
             int minEval = int.MaxValue;
 
-            foreach (Pawn pawn in pawnsCopy)
+            foreach (Pawn pawn in _player2.AllOwnedPawns)
             {
 
                 List<Cell> possibleMoves = pawn.GetPossibleMoves(_customGrid);
 
                 foreach (Cell cell in possibleMoves)
                 {
-                    pawn.CurrentGridPos = cell.GridPos;
+                    Vector2Int baseCurrentGridPos = pawn.CurrentGridPos;
+                    Cell baseCell = _customGrid.GridCells[baseCurrentGridPos.x, baseCurrentGridPos.y];
 
-                    var eval = Minimax(pawn.CurrentGridPos, depth - 1, Mathf.NegativeInfinity, Mathf.Infinity, false);
+                    // Making the move so we can simulate what will happen next
+                    baseCell.CurrentPawn = null;
+                    pawn.CurrentGridPos = cell.GridPos;
+                    cell.CurrentPawn = pawn;
+
+
+                    var eval = Minimax(pawn.CurrentGridPos, depth - 1, Mathf.NegativeInfinity, Mathf.Infinity, true);
+
+                    // Reseting the board's cells and pawn to its previous state
+                    cell.CurrentPawn = null;
+                    pawn.CurrentGridPos = baseCurrentGridPos;
+                    baseCell.CurrentPawn = pawn;
 
                     minEval = Mathf.Min(minEval, eval);
                     beta = Mathf.Min(beta, eval);
@@ -96,10 +126,6 @@ public class MinimaxIA : MonoBehaviour
 
             return minEval;
         }
-
-
-
-
     }
 
 
@@ -265,29 +291,60 @@ public class MinimaxIA : MonoBehaviour
 
 
 
+
+
     private int StaticEvaluationFunction(Vector2Int currentPos)
     {
         int TotalScore = 0;
         int curr;
-
-        Cell cell = _customGrid.GridCells[currentPos.x, currentPos.y];
-
-        if (cell.HasPawnOnIt) 
-        {
-            curr = cell.CurrentPawn.Value;
-        }
+        List<Pawn> canReachPawn = new();
 
         foreach (Pawn pawn in _allPawns)
         {
-            curr = pawn.Value;
+            // Select only the pawns which can reach the currentPos;
+            var direction = currentPos - pawn.CurrentGridPos;
+            if (pawn.OwningPlayer.PlayerID == 1)
+                direction *= -1;
 
-            // if player 1, total score value is positive
-            if (pawn.OwningPlayer == GameManager.Instance.Players[0])
-                TotalScore += curr;
-            else
-                TotalScore -= curr;
+            if (pawn.AvailableDirections.Contains(direction))
+                canReachPawn.Add(pawn);
         }
-        return TotalScore;   
+
+
+        foreach (Pawn pawn in canReachPawn)
+        {
+
+            Debug.Log("------------------------");
+            curr = pawn.Value;
+            Cell currentCell = _customGrid.GridCells[currentPos.x, currentPos.y];
+
+
+            // List<Cell> neighbours = _customGrid.GetNeighbours(currentCell);
+            List<Cell> possibleMoves = pawn.GetPossibleMovesFromCell(_customGrid, currentCell);
+
+            if (possibleMoves.Count == 0) break;
+
+            foreach (Cell newCell in possibleMoves)
+            {
+                if (newCell.HasPawnOnIt)
+                {
+                    // if player 1, total score value is positive
+                    if (newCell.CurrentPawn.OwningPlayer == GameManager.Instance.Players[0])
+                        TotalScore += curr;
+                    else
+                        TotalScore -= curr;
+
+
+                    Debug.Log("Pawn: " + pawn.name);
+                    Debug.Log("Total score:" + TotalScore);
+
+                }
+            }
+
+
+        }
+        return TotalScore;
     }
 
 }
+

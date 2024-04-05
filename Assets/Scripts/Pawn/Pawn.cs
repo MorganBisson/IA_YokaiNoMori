@@ -99,34 +99,42 @@ public class Pawn : MonoBehaviour
 
     public List<Cell> GetPossibleMoves(CustomGrid customGrid)
     {
+        List<Cell> possibleMoves = GetPossibleMovesFromCell(customGrid, customGrid.GridCells[_currentGridPos.x, _currentGridPos.y]) ;
+
+        return possibleMoves;
+    }
+
+
+    public List<Cell> GetPossibleMovesFromCell(CustomGrid customGrid, Cell cell)
+    {
         if (IsInReserve)
         {
             return customGrid.GetEmptyCells();
         }
 
 
-        List<Cell> neighbours = customGrid.GetNeighbours(customGrid.GridCells[_currentGridPos.x, _currentGridPos.y]);
+        List<Cell> neighbours = customGrid.GetNeighbours(cell);
         List<Cell> possibleMoves = new();
 
-        foreach (Cell cell in neighbours)
+        foreach (Cell neighbour in neighbours)
         {
-            var directionToCell = cell.GridPos - _currentGridPos;
+            var directionToCell = neighbour.GridPos - _currentGridPos;
 
             if (OwningPlayer.PlayerID == 1)
                 directionToCell *= 1;
 
             if (AvailableDirections.Contains(directionToCell))
             {
-                if (cell.HasPawnOnIt)
+                if (neighbour.HasPawnOnIt)
                 {
                     // if the owning player of the pawn on the cell is not the same as the current player, we can move on it and capture 
-                    if (cell.CurrentPawn.OwningPlayer != GameManager.Instance.CurrentPlayer)
-                        possibleMoves.Add(cell);
+                    if (neighbour.CurrentPawn.OwningPlayer != cell.CurrentPawn.OwningPlayer)
+                        possibleMoves.Add(neighbour);
 
                 }
                 else
                 {
-                    possibleMoves.Add(cell);
+                    possibleMoves.Add(neighbour);
                 }
             }
         }
