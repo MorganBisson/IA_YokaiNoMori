@@ -5,6 +5,17 @@ using UnityEngine;
 
 public class CustomGrid : MonoBehaviour
 {
+
+    public CustomGrid()
+    {
+
+    }
+
+    public CustomGrid(Cell[,] newgrid)
+    {
+        _grid = newgrid;
+    }
+
     [SerializeField]
     private bool _debugGrid;
 

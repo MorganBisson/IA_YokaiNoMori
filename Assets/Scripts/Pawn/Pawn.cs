@@ -88,6 +88,9 @@ public class Pawn : MonoBehaviour
         {
             transform.rotation = Quaternion.Euler(180, 0, 0);
         }
+
+        // Setting the current grid pos to an invalid value (cell does not exist, which means it is in the reserve)
+        _currentGridPos = new Vector2Int(-1, -1);
     }
 
     public virtual void OnParachute()
@@ -99,14 +102,22 @@ public class Pawn : MonoBehaviour
 
     public List<Cell> GetPossibleMoves(CustomGrid customGrid)
     {
-        List<Cell> possibleMoves = GetPossibleMovesFromCell(customGrid, customGrid.GridCells[_currentGridPos.x, _currentGridPos.y]) ;
 
-        return possibleMoves;
+        if (_currentGridPos.x < 0 || _currentGridPos.y < 0)
+        {
+            return customGrid.GetEmptyCells();
+        }
+        else
+        {
+            List<Cell> possibleMoves = GetPossibleMovesFromCell(customGrid, customGrid.GridCells[_currentGridPos.x, _currentGridPos.y]);
+            return possibleMoves;
+        }
     }
 
 
     public List<Cell> GetPossibleMovesFromCell(CustomGrid customGrid, Cell cell)
     {
+
         if (IsInReserve)
         {
             return customGrid.GetEmptyCells();
@@ -125,8 +136,11 @@ public class Pawn : MonoBehaviour
 
             if (AvailableDirections.Contains(directionToCell))
             {
+                // not using the bool since we just modify current pawn
                 if (neighbour.HasPawnOnIt)
                 {
+                    if (cell.CurrentPawn == null) continue;
+
                     // if the owning player of the pawn on the cell is not the same as the current player, we can move on it and capture 
                     if (neighbour.CurrentPawn.OwningPlayer != cell.CurrentPawn.OwningPlayer)
                         possibleMoves.Add(neighbour);

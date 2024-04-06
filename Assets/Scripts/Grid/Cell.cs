@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Cell
 {
-    public bool HasPawnOnIt => CurrentPawn != null;
+    public bool HasPawnOnIt => CurrentPawn;
 
     public Vector3 WorldPos;
 

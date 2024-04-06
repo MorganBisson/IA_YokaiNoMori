@@ -118,7 +118,6 @@ public class BoardManager : MonoBehaviour
             spawnCell.CurrentPawn = newPawn;
 
             player.PawnsList.Add(newPawn);
-            player.AllOwnedPawns.Add(newPawn);
 
             _allPawns.Add(newPawn);
 
@@ -137,9 +136,19 @@ public class BoardManager : MonoBehaviour
         {
             Pawn pawn = GameManager.Instance.CurrentPlayer.PawnsList[Random.Range(0, GameManager.Instance.CurrentPlayer.PawnsList.Count)];
 
-            _minimaxIA.Minimax(pawn.CurrentGridPos, 3, Mathf.NegativeInfinity, Mathf.Infinity, false);
+            _minimaxIA.Minimax(3, Mathf.NegativeInfinity, Mathf.Infinity, false);
+            _selectedPawn = _minimaxIA.PawnToMove;
+            Cell moveToCell = _customGrid.GridCells[_minimaxIA.BestMoveCell.GridPos.x, _minimaxIA.BestMoveCell.GridPos.y]
 
-            GameManager.Instance.NextTurn();
+            if (HandleParachute(_minimaxIA.BestMoveCell)) return;
+
+            if (_minimaxIA.BestMoveCell == null) return;
+
+            if (_selectedPawn == null) return;
+            // If it returns true, it means the player has moved the selected pawn, so we don't need to go further
+            
+            Cell previousPawnPos = _customGrid.GridCells[_selectedPawn.CurrentGridPos.x, _selectedPawn.CurrentGridPos.y];
+            HandleAIPawnMovement(_minimaxIA.BestMoveCell, previousPawnPos);
         }
         else
         {
@@ -211,6 +220,26 @@ public class BoardManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void HandleAIPawnMovement(Cell selectedCell, Cell previousPawnCell)
+    {
+
+        HandleCapturePawnAI(selectedCell);
+
+        GameManager.Instance.AddPawnMove(_selectedPawn, previousPawnCell.GridPos, selectedCell.GridPos);
+
+        MovePawn(selectedCell);
+
+        if (_selectedPawn.Type == YokaiType.Kodama)
+        {
+            CheckCanEvolve(selectedCell);
+        }
+
+        GameManager.Instance.NextTurn();
+
+        _selectedPawn = null;
+        
     }
 
     private bool HandlePawnSelection(Cell clickedCell)
@@ -286,23 +315,37 @@ public class BoardManager : MonoBehaviour
     {
         if (CheckSelectedPawnDirection(cell))
         {
-            if (cell.HasPawnOnIt)
-            {  
-                if (CanCapturePawn(cell))
-                {
+            
+            if (CanCapturePawn(cell))
+            {
                    
-                    GameManager.Instance.CurrentPlayer.CapturePawn(cell.CurrentPawn);
+                GameManager.Instance.CurrentPlayer.CapturePawn(cell.CurrentPawn);
 
-                    GameManager.Instance.RemovePawnMove(cell.CurrentPawn);
+                GameManager.Instance.RemovePawnMove(cell.CurrentPawn);
 
-                    GameManager.Instance.GetOtherPlayer().LosePawn(cell.CurrentPawn);
+                GameManager.Instance.GetOtherPlayer().LosePawn(cell.CurrentPawn);
 
-                    //cell.CurrentPawn = null;
-                }
+                cell.CurrentPawn = null;
             }
             return true;
         }
         return false;
+    }
+
+    private void HandleCapturePawnAI(Cell cell)
+    {
+        if (CanCapturePawn(cell))
+        {
+
+            GameManager.Instance.CurrentPlayer.CapturePawn(cell.CurrentPawn);
+
+            GameManager.Instance.RemovePawnMove(cell.CurrentPawn);
+
+            GameManager.Instance.GetOtherPlayer().LosePawn(cell.CurrentPawn);
+
+            cell.CurrentPawn = null;
+        }
+        
     }
 
 
