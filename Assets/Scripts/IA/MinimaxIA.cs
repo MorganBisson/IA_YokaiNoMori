@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net.NetworkInformation;
 using Unity.VisualScripting;
@@ -14,17 +15,26 @@ using UnityEngine;
 public class MinimaxIA : MonoBehaviour
 {
 
+
+    [SerializeField] private Transform _listCopyPawnsTransform;
+
+
     private List<Pawn> _allPawns => BoardManager.Instance.AllPawns;
     private CustomGrid _customGrid => BoardManager.Instance.CustomGrid;
 
-    private Pawn _pawnToMove;
-    public Pawn PawnToMove =>_pawnToMove;
+    private Vector2Int _pawnToMoveGridPos;
+    public Vector2Int PawnToMoveGridPos => _pawnToMoveGridPos;
 
     private Cell _bestMoveCell;
     public Cell BestMoveCell => _bestMoveCell;
 
     private Cell[,] _gridCellCopy;
-    private CustomGrid _gridCopy; 
+    private CustomGrid _gridCopy;
+
+
+    private List<Pawn> _copiedPawn = new();
+
+
 
 
 
@@ -39,11 +49,6 @@ public class MinimaxIA : MonoBehaviour
             return value;
         }
 
-        
-
-        _customGrid.GridCells.CopyTo(_gridCellCopy, 0);
-
-        _gridCopy = new(_gridCellCopy);
 
 
         if (maximizingPlayer) 
@@ -57,12 +62,14 @@ public class MinimaxIA : MonoBehaviour
 
             int maxEval = int.MinValue;
 
-            foreach (Pawn pawn in _allPawns)
+            foreach (Pawn pawn in _copiedPawn)
             {
 
                 if (pawn.OwningPlayer.PlayerID != 0) continue;
 
                 List<Cell> possibleMoves = pawn.GetPossibleMoves(_gridCopy);
+
+                if (possibleMoves.Count == 0) continue;
 
                 foreach (Cell cell in possibleMoves)
                 {
@@ -79,7 +86,7 @@ public class MinimaxIA : MonoBehaviour
                     else
                     {
                         baseCurrentGridPos = pawn.CurrentGridPos;
-                        baseCell = _customGrid.GridCells[baseCurrentGridPos.x, baseCurrentGridPos.y];
+                        baseCell = _gridCopy.GridCells[baseCurrentGridPos.x, baseCurrentGridPos.y];
                     }
                     
 
@@ -104,7 +111,7 @@ public class MinimaxIA : MonoBehaviour
 
                     if (eval > maxEval)
                     {
-                        _pawnToMove = pawn;
+                        _pawnToMoveGridPos = pawn.CurrentGridPos;
                         _bestMoveCell = cell;
                     }
 
@@ -127,14 +134,14 @@ public class MinimaxIA : MonoBehaviour
 
             int minEval = int.MaxValue;
 
-            foreach (Pawn pawn in _allPawns)
+            foreach (Pawn pawn in _copiedPawn)
             {
 
                 if (pawn.OwningPlayer.PlayerID == 0) continue;
 
-                List<Cell> possibleMoves = pawn.GetPossibleMoves(_customGrid);
+                List<Cell> possibleMoves = pawn.GetPossibleMoves(_gridCopy);
 
-                if (possibleMoves == null) continue;
+                if (possibleMoves.Count == 0) continue;
 
                 foreach (Cell cell in possibleMoves)
                 {
@@ -150,7 +157,7 @@ public class MinimaxIA : MonoBehaviour
                     else
                     {
                         baseCurrentGridPos = pawn.CurrentGridPos;
-                        baseCell = _customGrid.GridCells[baseCurrentGridPos.x, baseCurrentGridPos.y];
+                        baseCell = _gridCopy.GridCells[baseCurrentGridPos.x, baseCurrentGridPos.y];
                     }
 
 
@@ -172,9 +179,9 @@ public class MinimaxIA : MonoBehaviour
                     cell.CurrentPawn = null;
 
 
-                    if (eval <= minEval)
+                    if (eval < minEval)
                     {
-                        _pawnToMove = pawn;
+                        _pawnToMoveGridPos = pawn.CurrentGridPos;
                         _bestMoveCell = cell;
                     }
 
@@ -191,170 +198,6 @@ public class MinimaxIA : MonoBehaviour
             return minEval;
         }
     }
-
-
-    //private int AlphaBeta(int depth, bool isMax, int alpha, int beta)
-    //{
-    //    // If max depth is reached or Game is Over
-    //    if (depth == 0 || isGameOver())
-    //    {
-    //        // Static Evaluation Function
-    //        int value = StaticEvaluationFunction();
-
-    //        return value;
-    //    }
-
-    //    // string ActiveChessmansDetail = "";
-
-    //    // If it is max turn(NPC turn : Black)
-    //    if (isMax)
-    //    {
-    //        int hValue = System.Int32.MinValue;
-    //        // int ind = 0;
-    //        // Get list of all possible moves with their heuristic value
-    //        // For all chessmans
-    //        foreach (Chessman chessman in ActiveChessmans.ToArray())
-    //        {
-    //            // ActiveChessmansDetail = ActiveChessmansDetail + "(" + ++ind + ")" + (chessman.isWhite?"White":"Black") + chessman.GetType() + "(" + chessman.currentX + ", " + chessman.currentY + ")" + "\t\t ";
-
-    //            if (chessman.isWhite) continue;
-
-    //            bool[,] allowedMoves = chessman.PossibleMoves();
-
-    //            // detail = detail + "(" + ind + ") " + (chessman.isWhite?"White":"Black") + chessman.GetType() + " at (" + chessman.currentX + ", " + chessman.currentY + ") moves :" + printMoves(allowedMoves);
-
-    //            // For all possible moves
-    //            for (int x = 0; x < 8; x++)
-    //            {
-    //                for (int y = 0; y < 8; y++)
-    //                {
-    //                    if (allowedMoves[x, y])
-    //                    {
-    //                        // detail = detail + printTabs(maxDepth - depth) + "(" + ind + ") " + " " + (depth + " Moving Black " + chessman.GetType() + " to (" + x + ", " + y + ")");
-
-    //                        // Critical Section : 
-    //                        // 1) Making the current move to see next possible moves after this move in next calls
-    //                        Move(chessman, x, y, depth);
-
-    //                        // 2 ) Calculate heuristic value current move
-    //                        int thisMoveValue = AlphaBeta(depth - 1, !isMax, alpha, beta);
-
-    //                        // if(depth-1 == 0) detail = detail + " " + thisMoveValue + "\n";
-    //                        // else detail = detail + "\n";
-
-    //                        // 3 ) Undo the current move to get back the same state that was there before making the current move
-    //                        Undo(depth);
-
-    //                        if (hValue < thisMoveValue)
-    //                        {
-    //                            hValue = thisMoveValue;
-
-    //                            // Remember which move gave the highest hValue
-    //                            if (depth == maxDepth - 1)
-    //                            {
-    //                                NPCSelectedChessman = chessman;
-    //                                moveX = x;
-    //                                moveY = y;
-    //                            }
-    //                        }
-
-    //                        if (hValue > alpha)
-    //                            alpha = hValue;
-
-    //                        if (beta <= alpha)
-    //                            break;
-    //                    }
-    //                }
-
-    //                if (beta <= alpha)
-    //                    break;
-    //            }
-
-    //            if (beta <= alpha)
-    //                break;
-    //        }
-
-    //        // if(depth == maxDepth-1) detail += "ActiveChessmans : \n" + ActiveChessmansDetail + "\n";
-
-    //        return hValue;
-    //    }
-    //    // If it is min turn(Player turn : White)
-    //    else
-    //    {
-    //        int hValue = System.Int32.MaxValue;
-    //        // int ind = 0;
-
-    //        // Get list of all possible moves with their heuristic value
-    //        // For all chessmans
-    //        foreach (Chessman chessman in ActiveChessmans.ToArray())
-    //        {
-    //            // ActiveChessmansDetail = ActiveChessmansDetail + "\n(" + ++ind + ")" + (chessman.isWhite?"White":"Black") + chessman.GetType() + "(" + chessman.currentX + ", " + chessman.currentY + ")" + "\t\t ";
-
-    //            if (!chessman.isWhite) continue;
-
-    //            bool[,] allowedMoves = chessman.PossibleMoves();
-
-    //            // if(depth == 2) detail = detail + "(" + ind + ") " + (chessman.isWhite?"White":"Black") + chessman.GetType() + " at (" + chessman.currentX + ", " + chessman.currentY + ") moves :" + printMoves(allowedMoves);
-
-    //            // For all possible moves
-    //            for (int x = 0; x < 8; x++)
-    //            {
-    //                for (int y = 0; y < 8; y++)
-    //                {
-    //                    if (allowedMoves[x, y])
-    //                    {
-    //                        // detail = detail + printTabs(maxDepth - depth) + "(" + ind + ") " + " " + (depth + " Moving White " + chessman.GetType() + " to (" + x + ", " + y + ")\n");
-
-    //                        // Critical Section : 
-    //                        // 1) Making the current move to see next possible moves after this move in next calls
-    //                        Move(chessman, x, y, depth);
-
-    //                        // 2 ) Calculate heuristic value current move
-    //                        int thisMoveValue = AlphaBeta(depth - 1, !isMax, alpha, beta);
-
-    //                        // if(depth-1 == 0) detail = detail + " " + thisMoveValue + "\n";
-    //                        // else detail = detail + "\n";
-
-    //                        // 3 ) Undo the current move to get back the same state that was there before making the current move
-    //                        Undo(depth);
-
-    //                        if (hValue > thisMoveValue)
-    //                        {
-    //                            hValue = thisMoveValue;
-    //                            // The following 6-7 lines are commented, that is suggesting that 
-    //                            // We won't update NPCSelectedChessman, moveX and moveY in min turn
-    //                            // if(depth == maxDepth-1)
-    //                            // {
-    //                            //     NPCSelectedChessman = chessman;
-    //                            //     moveX = x;
-    //                            //     moveY = y;
-    //                            // }
-    //                        }
-
-    //                        if (hValue < beta)
-    //                            beta = hValue;
-
-    //                        if (beta <= alpha)
-    //                            break;
-    //                    }
-    //                }
-
-    //                if (beta <= alpha)
-    //                    break;
-    //            }
-
-    //            if (beta <= alpha)
-    //                break;
-    //        }
-
-    //        // if(depth == maxDepth-1) detail += "ActiveChessmans : \n" + ActiveChessmansDetail + "\n";
-
-    //        return hValue;
-    //    }
-    //}
-
-
-
 
 
     private int StaticEvaluationFunction()
@@ -375,7 +218,7 @@ public class MinimaxIA : MonoBehaviour
         //}
         int pawnCount = 0; 
 
-        foreach (Cell cell in _customGrid.GridCells)
+        foreach (Cell cell in _gridCopy.GridCells)
         {
             if (cell.CurrentPawn == null) continue;
 
@@ -389,7 +232,7 @@ public class MinimaxIA : MonoBehaviour
                 TotalScore -= curr; 
         }
 
-        Debug.Log("Pawn count:" + pawnCount +" and Total Score = " + TotalScore);
+        //Debug.Log("Pawn count:" + pawnCount +" and Total Score = " + TotalScore);
         
         //foreach (Pawn pawn in canReachPawn)
         //{
@@ -427,6 +270,57 @@ public class MinimaxIA : MonoBehaviour
         //}
         return TotalScore;
     }
+
+
+
+    public void CopyCustomGrid()
+    {
+        int gridLengthX = _customGrid.GridCells.GetLength(0);
+        int gridLengthY = _customGrid.GridCells.GetLength(1);
+
+        _gridCellCopy = new Cell[gridLengthX, gridLengthY];
+
+        for (int i = 0; i < gridLengthX; i++)
+        {
+            for (int j = 0; j < gridLengthY; j++)
+            {
+                Cell copiedCell = CopyCell(_customGrid.GridCells[i, j]);
+
+                if (_customGrid.GridCells[i, j].HasPawnOnIt)
+                {
+                    copiedCell.CurrentPawn = _customGrid.GridCells[i, j].CurrentPawn.Clone(_listCopyPawnsTransform);
+                    _copiedPawn.Add(copiedCell.CurrentPawn);
+                }
+
+                _gridCellCopy[i, j] = copiedCell;
+            }
+        }
+
+        _gridCopy = Instantiate(_customGrid);
+        _gridCopy.GridCells = _gridCellCopy;
+
+
+
+    }
+
+    public void DestroyGridCopy()
+    {
+
+        for (int i = 0; i < _listCopyPawnsTransform.childCount; i++)
+        {
+            Destroy(_listCopyPawnsTransform.GetChild(i).gameObject);
+        }
+
+        _gridCellCopy = null;
+        Destroy(_gridCopy.gameObject);
+    }
+
+
+    private Cell CopyCell(Cell cellToCopy)
+    {
+        return new Cell(cellToCopy.WorldPos, cellToCopy.GridPos);
+    }
+
 
 }
 

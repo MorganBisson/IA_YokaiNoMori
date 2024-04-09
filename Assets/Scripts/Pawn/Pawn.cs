@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -136,7 +137,7 @@ public class Pawn : MonoBehaviour
 
             if (AvailableDirections.Contains(directionToCell))
             {
-                // not using the bool since we just modify current pawn
+                
                 if (neighbour.HasPawnOnIt)
                 {
                     if (cell.CurrentPawn == null) continue;
@@ -174,4 +175,25 @@ public class Pawn : MonoBehaviour
     }
 
 
+    public void DeactivateComponentsForCopy()
+    {
+        _spriteRenderer.enabled = false;
+        _boxCollider.enabled= false;
+        _handleReserveClick.enabled= false;
+
+    }
+
+    public Pawn Clone(Transform transform)
+    {
+
+        Pawn pawn = Instantiate(this, transform);
+        pawn.OwningPlayer = _owningPlayer;
+        pawn.CurrentGridPos = _currentGridPos;
+        pawn.AvailableDirections = _availableDirection;
+
+        pawn.DeactivateComponentsForCopy();
+
+        return pawn;
+
+    }
 }

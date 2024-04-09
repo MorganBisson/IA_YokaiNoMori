@@ -1955,6 +1955,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 685099729}
     - target: {fileID: 6669646491147807585, guid: 3e66d0bac734e5044adc6bb5cd39b23b, type: 3}
+      propertyPath: _gameMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6669646491147807585, guid: 3e66d0bac734e5044adc6bb5cd39b23b, type: 3}
       propertyPath: listPawns
       value: 
       objectReference: {fileID: 2035229078}
@@ -2059,6 +2063,10 @@ PrefabInstance:
       propertyPath: _listPawnsTransform
       value: 
       objectReference: {fileID: 2035229078}
+    - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
+      propertyPath: _timeBeforeAILaunch
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
       propertyPath: _startPawns.Array.size
       value: 4

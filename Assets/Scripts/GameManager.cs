@@ -5,8 +5,16 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum GameMode
+{
+    Multiplayer,
+    AI
+}
+
+
 public class GameManager : MonoBehaviour
 {
+
 
     // used to check if there is a draw
     public class PawnMove
@@ -76,6 +84,9 @@ public class GameManager : MonoBehaviour
     private bool _drawGame = false;
 
 
+    [SerializeField] private GameMode _gameMode;
+    public GameMode CurrentGameMode => _gameMode;
+
     private void Awake()
     {
         if (_instance == null)
@@ -111,6 +122,11 @@ public class GameManager : MonoBehaviour
 
         // We need to check after switching player to check if the player has won before playing its move
         CheckHasWon();
+
+        if (CurrentGameMode == GameMode.AI && _currentPlayer.PlayerID == 1) 
+        {
+            StartCoroutine(_boardManager.LaunchAI());
+        }
 
         _turnCount++;
     }

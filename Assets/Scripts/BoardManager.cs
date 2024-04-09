@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
@@ -30,12 +31,18 @@ public class BoardManager : MonoBehaviour
 
     [SerializeField] private float _timeBetweenClicks;
     [SerializeField] private Transform _listPawnsTransform;
-    public Transform ListPawnsTransform => _listPawnsTransform;
 
     [Header("PAWN START")]
     [Tooltip("The pawns which every players start with")]
     [SerializeField] private List<Pawn> _startPawns;
     public List<Pawn> StartPawns => _startPawns;
+
+    [SerializeField] float _timeBeforeAILaunch = 0.5f;
+
+    public Transform ListPawnsTransform => _listPawnsTransform;
+
+
+    
 
 
     private Pawn _selectedPawn;
@@ -75,6 +82,9 @@ public class BoardManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && _clickCooldown <= Time.time)
         {
+            if (GameManager.Instance.CurrentPlayer.PlayerID == 1 && GameManager.Instance.CurrentGameMode == GameMode.AI) return; 
+
+
             if (GameManager.Instance.IsGameInProgress == true)
             {
                 _clickCooldown = Time.time + _timeBetweenClicks;
@@ -132,39 +142,58 @@ public class BoardManager : MonoBehaviour
        
         Cell clickedCell = GetClickedCell();
 
-        if (GameManager.Instance.CurrentPlayer.PlayerID == 1)
+        
+        // If it returns true, it means the player has parachuted a pawn, so we don't need to go further
+        if(HandleParachute(clickedCell)) return;
+
+        if (clickedCell == null) return;
+
+        // If it returns true, it means the player has selected a pawn, so we don't need to go further
+        if (HandlePawnSelection(clickedCell)) return;
+
+        if (_selectedPawn == null) return;
+
+        // If it returns true, it means the player has moved the selected pawn, so we don't need to go further
+        if (HandlePawnMovement(clickedCell)) return;
+
+    }
+
+    public IEnumerator LaunchAI()
+    {
+        yield return new WaitForSeconds(_timeBeforeAILaunch);
+
+        _minimaxIA.CopyCustomGrid();
+
+        _minimaxIA.Minimax(3, Mathf.NegativeInfinity, Mathf.Infinity, false);
+
+
+        _selectedPawn = _customGrid.GridCells[_minimaxIA.PawnToMoveGridPos.x, _minimaxIA.PawnToMoveGridPos.y].CurrentPawn;
+        Cell moveToCell = _customGrid.GridCells[_minimaxIA.BestMoveCell.GridPos.x, _minimaxIA.BestMoveCell.GridPos.y];
+
+        if (HandleParachute(moveToCell))
         {
-            Pawn pawn = GameManager.Instance.CurrentPlayer.PawnsList[Random.Range(0, GameManager.Instance.CurrentPlayer.PawnsList.Count)];
-
-            _minimaxIA.Minimax(3, Mathf.NegativeInfinity, Mathf.Infinity, false);
-            _selectedPawn = _minimaxIA.PawnToMove;
-            Cell moveToCell = _customGrid.GridCells[_minimaxIA.BestMoveCell.GridPos.x, _minimaxIA.BestMoveCell.GridPos.y]
-
-            if (HandleParachute(_minimaxIA.BestMoveCell)) return;
-
-            if (_minimaxIA.BestMoveCell == null) return;
-
-            if (_selectedPawn == null) return;
-            // If it returns true, it means the player has moved the selected pawn, so we don't need to go further
-            
-            Cell previousPawnPos = _customGrid.GridCells[_selectedPawn.CurrentGridPos.x, _selectedPawn.CurrentGridPos.y];
-            HandleAIPawnMovement(_minimaxIA.BestMoveCell, previousPawnPos);
+            StopCoroutine(LaunchAI());
+            yield return null;
         }
-        else
+
+        if (moveToCell == null)
         {
-            // If it returns true, it means the player has parachuted a pawn, so we don't need to go further
-            if(HandleParachute(clickedCell)) return;
-
-            if (clickedCell == null) return;
-
-            // If it returns true, it means the player has selected a pawn, so we don't need to go further
-            if (HandlePawnSelection(clickedCell)) return;
-
-            if (_selectedPawn == null) return;
-
-            // If it returns true, it means the player has moved the selected pawn, so we don't need to go further
-            if (HandlePawnMovement(clickedCell)) return;
+            StopCoroutine(LaunchAI());
+            yield return null;
         }
+
+        if (_selectedPawn == null)
+        {
+            StopCoroutine(LaunchAI());
+            yield return null;
+        }
+        // If it returns true, it means the player has moved the selected pawn, so we don't need to go further
+
+        Cell previousPawnPos = _customGrid.GridCells[_selectedPawn.CurrentGridPos.x, _selectedPawn.CurrentGridPos.y];
+        HandleAIPawnMovement(moveToCell, previousPawnPos);
+
+        _minimaxIA.DestroyGridCopy();
+        yield return null;
     }
 
 

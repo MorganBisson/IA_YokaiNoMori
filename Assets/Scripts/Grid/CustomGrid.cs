@@ -23,7 +23,11 @@ public class CustomGrid : MonoBehaviour
 
     private Cell[,] _grid;
 
-    public Cell[,] GridCells => _grid;
+    public Cell[,] GridCells
+    {
+        get { return _grid; }
+        set { _grid = value; }
+    }
 
 
     int _gridSizeX;
@@ -105,7 +109,7 @@ public class CustomGrid : MonoBehaviour
                 int checkX = (int)cell.GridPos.x + x;
                 int checkY = (int)cell.GridPos.y + y;
 
-                if (checkX >= 0 && checkX < _gridSizeX && checkY >= 0 && checkY < _gridSizeY)
+                if (checkX >= 0 && checkX < _grid.GetLength(0) && checkY >= 0 && checkY < _grid.GetLength(0))
                 {
                     neighbours.Add(_grid[checkX, checkY]);
                 }

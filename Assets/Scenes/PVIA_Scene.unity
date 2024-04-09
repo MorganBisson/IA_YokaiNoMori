@@ -882,6 +882,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19e91107de3bf5e44beb92b03e708316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _listCopyPawnsTransform: {fileID: 1721903164}
 --- !u!1 &808115687
 GameObject:
   m_ObjectHideFlags: 0
@@ -1609,6 +1610,37 @@ MonoBehaviour:
   - {fileID: 1602260753}
   - {fileID: 1167371692}
   - {fileID: 1158252059}
+--- !u!1 &1721903163
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1721903164}
+  m_Layer: 0
+  m_Name: ListCopy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1721903164
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721903163}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1744130582
 GameObject:
   m_ObjectHideFlags: 0
@@ -1999,6 +2031,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 685099729}
     - target: {fileID: 6669646491147807585, guid: 3e66d0bac734e5044adc6bb5cd39b23b, type: 3}
+      propertyPath: _gameMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6669646491147807585, guid: 3e66d0bac734e5044adc6bb5cd39b23b, type: 3}
       propertyPath: listPawns
       value: 
       objectReference: {fileID: 2035229078}
@@ -2108,6 +2144,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2035229078}
     - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
+      propertyPath: _timeBeforeAILaunch
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2344579791221890625, guid: 4d167cba82dd8fe4195e4417aa12bae1, type: 3}
       propertyPath: _startPawns.Array.size
       value: 4
       objectReference: {fileID: 0}
@@ -2148,6 +2188,7 @@ SceneRoots:
   - {fileID: 7693014174511609256}
   - {fileID: 176577893}
   - {fileID: 2035229078}
+  - {fileID: 1721903164}
   - {fileID: 1653187893}
   - {fileID: 1409757941}
   - {fileID: 584138430}
