@@ -306,7 +306,7 @@ public class MinimaxIA : MonoBehaviour
         {
             Destroy(_listCopyPawnsTransform.GetChild(i).gameObject);
         }
-
+        _copiedPawn.Clear();
         _gridCellCopy = null;
         Destroy(_gridCopy.gameObject);
     }

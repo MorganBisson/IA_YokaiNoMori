@@ -258,10 +258,12 @@ public class BoardManager : MonoBehaviour
     private void HandleAIPawnMovement(Cell selectedCell, Cell previousPawnCell)
     {
 
+
         HandleCapturePawnAI(selectedCell);
 
         GameManager.Instance.AddPawnMove(_selectedPawn, previousPawnCell.GridPos, selectedCell.GridPos);
 
+        previousPawnCell.CurrentPawn = null;
         MovePawn(selectedCell);
 
         if (_selectedPawn.Type == YokaiType.Kodama)
