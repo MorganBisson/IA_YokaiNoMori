@@ -786,7 +786,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2025884463}
         m_TargetAssemblyTypeName: EndMenuManager, Assembly-CSharp
-        m_MethodName: LoadGameScene
+        m_MethodName: RestartLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

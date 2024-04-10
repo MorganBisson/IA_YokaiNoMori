@@ -24,7 +24,7 @@ public class BoardManager : MonoBehaviour
     }
 
     [SerializeField] private MinimaxIA _minimaxIA;
-
+    public int IADepth;
 
     [SerializeField] private CustomGrid _customGrid;
     public CustomGrid CustomGrid => _customGrid;
@@ -41,9 +41,8 @@ public class BoardManager : MonoBehaviour
 
     public Transform ListPawnsTransform => _listPawnsTransform;
 
-
-    
-
+    public GameObject directionIndicatorPrefab;
+    public RectTransform directionIndicatorParent;
 
     private Pawn _selectedPawn;
     public Pawn SelectedPawn
@@ -76,6 +75,11 @@ public class BoardManager : MonoBehaviour
         }
 
         _camera = Camera.main;
+    }
+
+    private void Start()
+    {
+        if(_minimaxIA != null) IADepth = PlayerPrefs.GetInt("Difficulty");
     }
 
     void Update()
@@ -138,10 +142,8 @@ public class BoardManager : MonoBehaviour
 
     // This function handle situation when the player click on the custom grid;
     private void OnPlayerClick()
-    {
-       
+    {       
         Cell clickedCell = GetClickedCell();
-
         
         // If it returns true, it means the player has parachuted a pawn, so we don't need to go further
         if(HandleParachute(clickedCell)) return;
@@ -164,7 +166,7 @@ public class BoardManager : MonoBehaviour
 
         _minimaxIA.CopyCustomGrid();
 
-        _minimaxIA.Minimax(3, Mathf.NegativeInfinity, Mathf.Infinity, false);
+        _minimaxIA.Minimax(IADepth, Mathf.NegativeInfinity, Mathf.Infinity, false);
 
 
         _selectedPawn = _customGrid.GridCells[_minimaxIA.PawnToMoveGridPos.x, _minimaxIA.PawnToMoveGridPos.y].CurrentPawn;
@@ -231,6 +233,8 @@ public class BoardManager : MonoBehaviour
     {
         if (CanMovePawn(clickedCell))
         {
+            ClearDirectionIndicators();
+
             GameManager.Instance.AddPawnMove(_selectedPawn, _previousClickedCell.GridPos, clickedCell.GridPos);
 
             MovePawn(clickedCell);
@@ -276,6 +280,7 @@ public class BoardManager : MonoBehaviour
         if (CanSelectPawn(clickedCell))
         {
             _selectedPawn = clickedCell.CurrentPawn;
+            ShowAvailableDirections(_selectedPawn);
             _previousClickedCell = clickedCell;
             return true;
         }
@@ -285,7 +290,33 @@ public class BoardManager : MonoBehaviour
 
     #endregion
 
+    private void ShowAvailableDirections(Pawn selectedPawn)
+    {
+        // Efface les indicateurs précédents
+        ClearDirectionIndicators();
 
+        Vector2Int[] availableDirections = selectedPawn.AvailableDirections;
+
+        foreach (Vector2Int direction in availableDirections)
+        {
+            Vector3 indicatorPosition = selectedPawn.transform.position + new Vector3(direction.x, direction.y, 0) * 1.82f;
+
+            if (_customGrid.CheckClickedOnGrid(indicatorPosition))
+            {
+                GameObject directionIndicator = Instantiate(directionIndicatorPrefab, directionIndicatorParent);
+                RectTransform indicatorRectTransform = directionIndicator.GetComponent<RectTransform>();
+                indicatorRectTransform.position = indicatorPosition;
+            }
+        }
+    }
+
+    private void ClearDirectionIndicators()
+    {
+        foreach (Transform child in directionIndicatorParent)
+        {
+            Destroy(child.gameObject);
+        }
+    }
 
     private bool CheckReservePawnSelected()
     {

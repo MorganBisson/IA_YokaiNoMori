@@ -8,10 +8,12 @@ using DG.Tweening;
 public class EndMenuManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI txtResult;
+    private string restartLevel;
 
     void Start()
     {
         if (GameWinner.isWin) txtResult.text = GameWinner.WinPlayer.PlayerID == 0 ? "Player One Win" : "Player Two Win";
+        restartLevel = GameWinner.GameMode;
 
         txtResult.transform.DOShakePosition(3f, 10f, 10);
     }
@@ -21,9 +23,9 @@ public class EndMenuManager : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
-    public void LoadGameScene()
+    public void RestartLevel()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(restartLevel);
     }
 
     public void QuitGame()

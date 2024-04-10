@@ -19,4 +19,9 @@ public class MainMenuManager : MonoBehaviour
     {
         Application.Quit();
     }
+
+    public void SetDifficulty(int difficulty)
+    {
+        PlayerPrefs.SetInt("Difficulty", difficulty);
+    }
 }

@@ -388,6 +388,7 @@ public class GameManager : MonoBehaviour
         else
         {
             _currentPlayer.HasWon = true;
+            GameWinner.GameMode = SceneManager.GetActiveScene().name;
             GameWinner.isWin = true;
             GameWinner.WinPlayer = _currentPlayer;
             SceneManager.LoadScene(3);

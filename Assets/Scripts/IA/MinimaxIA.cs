@@ -34,10 +34,6 @@ public class MinimaxIA : MonoBehaviour
 
     private List<Pawn> _copiedPawn = new();
 
-
-
-
-
     // Minimax with Alpha Beta implemented 
     // Set maximizing player to false when we call the function (since the AI will always be player 2)
     public int Minimax(int depth, float alpha, float beta, bool maximizingPlayer)
